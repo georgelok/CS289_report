@@ -7,9 +7,23 @@
 \usepackage{graphicx}
 \usepackage{tabto}
 \usepackage{float}
+\setlength{\columnsep}{0.3in} 
+
+\renewenvironment{abstract}
+ {\small
+  \begin{center}
+  \bfseries \abstractname\vspace{-.5em}\vspace{0pt}
+  \end{center}
+  \list{}{%
+    \setlength{\leftmargin}{0.1in}% <---------- CHANGE HERE
+    \setlength{\rightmargin}{\leftmargin}%
+  }%
+  \item\relax}
+ {\endlist}
 
 \begin{document}
 {
+\vspace*{25px}
  \centering
  \LARGE Six Degrees of Collaboration \\ A Predator Pack's Guide to Success \\[1.5em]
  \large Sami Ghoche,
@@ -20,8 +34,9 @@
 	CS289 Final Project\\
 	
 	Harvard University
-
-  }
+	
+\vspace{75px}
+}
 \begin{multicols}{2}
 
 \begin{abstract}
@@ -31,7 +46,9 @@ We introduce different collaboration policies for a pack of predators chasing a 
 \end{abstract}
 
 \section{Introduction}
-In nature, we observe that predator animals (including human beings) often collaborate when chasing a prey. This is because in some settings, a team of collaborating predators can achieve outcomes that separated individuals cannot, such as outcomes resulting from trapping behavior. However, collaboration nearly always exhibits large costs. First, collaborating agents have to split their rewards with their collaborators. In the animal world, this means gaining fewer resources; in law enforcement, this may mean receiving less credit for capturing criminals. Furthermore, collaboration always requires a form of coordination, and coordination is expensive. For example, we can consider "perfect collaboration", whereby many predator agents act as a single unit that makes a single decision involving the movement of every agent in the team. This is essentially the same as having a centralized controller or a brain that directs each agent in the team. Such a centralized system though is not scalable, and there has been much research directed at developing scalable multi-agent systems in which computation is distributed among agents. In this paper, we assume that predators consider each other as collaborators instead of competitors, and they strive jointly to maximize an aggregate reward, meaning that all agents benefit equally when the prey is captured, regardless of which predator captured it. We also disregard the free-rider problem and assume that all predators actively make an effort to help the team instead of relying on other collaborators and reaping the benefits of the capture. For our experiments, we used the Berkeley Pacman framework \cite{Pacman}. because it allows for very general predator/prey model simulations. We operate in two settings: In the first setting, all predators can observe each other and their prey at all times, whereas in the second setting, predators can only observe what is directly in their line of sight. In the first setting, we present six different collaboration strategies with varying degrees of collaborative cost and efficiency: 1- Fully centralized collaboration. 2- Fully centralized collaboration of loosely coupled subteams. 3- Encrypted communication of actions between predators. 4- Communication of actions between predators that can be overheard by a prey. 5- Individual actions while taking into account positions of other predators. 6- No collaboration at all. The first five of these strategies require the notion of trapping behavior, and one of the main contributions of this paper is a successful heuristic that leads to trapping behavior. In the second setting, agents leave stigmergic trails behind them that decay with time, this is reminiscent of many examples of stigmergic communication observed in nature (for example in foraging ants [REFERENCE]). We compare two alternative strategies that predators can use to interact with the stigmergic trails that others leave behind. 1- Avoid these trails in an attempt to split up effectively and capture the prey. 2- Follow these trails in an attempt to congregate and corner the prey when it is found.\\
+In nature, we observe that predator animals (including human beings) often collaborate when chasing a prey. This is because in some settings, a team of collaborating predators can achieve outcomes that separated individuals cannot, such as outcomes resulting from trapping behavior. However, collaboration nearly always exhibits large costs. First, collaborating agents have to split their rewards with their collaborators. In the animal world, this means gaining fewer resources; in law enforcement, this may mean receiving less credit for capturing criminals. Furthermore, collaboration always requires a form of coordination, and coordination is expensive. For example, we can consider ``perfect collaboration", whereby many predator agents act as a single unit that makes a single decision involving the movement of every agent in the team. This is essentially the same as having a centralized controller or a brain that directs each agent in the team. Such a centralized system though is not scalable, and there has been much research directed at developing scalable multi-agent systems in which computation is distributed among agents. 
+
+In this paper, we assume that predators consider each other as collaborators instead of competitors, and they strive jointly to maximize an aggregate reward, meaning that all agents benefit equally when the prey is captured, regardless of which predator captured it. We also disregard the free-rider problem and assume that all predators actively make an effort to help the team instead of relying on other collaborators and reaping the benefits of the capture. For our experiments, we used the Berkeley Pacman framework \cite{Pacman}. because it allows for very general predator/prey model simulations. We operate in two settings: In the first setting, all predators can observe each other and their prey at all times, whereas in the second setting, predators can only observe what is directly in their line of sight. In the first setting, we present six different collaboration strategies with varying degrees of collaborative cost and efficiency: 1- Fully centralized collaboration. 2- Fully centralized collaboration of loosely coupled subteams. 3- Encrypted communication of actions between predators. 4- Communication of actions between predators that can be overheard by a prey. 5- Individual actions while taking into account positions of other predators. 6- No collaboration at all. The first five of these strategies require the notion of trapping behavior, and one of the main contributions of this paper is a successful heuristic that leads to trapping behavior. In the second setting, agents leave stigmergic trails behind them that decay with time, this is reminiscent of many examples of stigmergic communication observed in nature (for example in foraging ants \cite{beckers1992trails}). We compare two alternative strategies that predators can use to interact with the stigmergic trails that others leave behind. 1- Avoid these trails in an attempt to split up effectively and capture the prey. 2- Follow these trails in an attempt to congregate and corner the prey when it is found.\\
 \indent The paper is organized into the following sections: Section 2 describes related work. Section 3 provides detailed descriptions with theoretical considerations of our six strategies in the first setting, and two strategies in the second setting. Section 4 describes our implementation using the Berkeley Pacman framework and the experiments we conducted. Section 5 presents our results and discusses them. Section 6 states our conclusions and future directions. 
 
 \section{Related Work}
@@ -61,7 +78,7 @@ In the first setting, we propose six different strategies. Here they are in decr
 \end{enumerate}
 
 \subsection{Second Setting}
-In the second setting, we propose two different strategies revolving around the use of stigmergy.  The basic principle is that ghosts leave trails that other ghosts can see. The amount of trail left can depend on when ghosts see Pacman.  Ghosts will with high probability chase after Pacman if they see them.  Ghosts keep track of Pacman's last known position, and are biased to go towards that position if they don't see Pacman.  This last known position is reset if they arrive at the position and do not see Pacman.
+In the second setting, we propose two different strategies revolving around the use of stigmergy.  The basic principle is that ghosts leave trails that other ghosts can sense when they are on top of them. The amount of trail left can depend on when ghosts see Pacman.  Ghosts will with high probability chase after Pacman if they see them.  Ghosts keep track of Pacman's last known position, and are biased to go towards that position if they don't see Pacman.  This last known position is reset if they arrive at the position and do not see Pacman.
 
 \begin{enumerate}[leftmargin=0.25cm]
 	\item Attractive Stigmergy\\
@@ -155,12 +172,8 @@ adsfasdfsadf
 \begin{multicols}{2}
 
 Some words about the other previous figure. 
-
 %\includegraphics[width=\columnwidth]{CornersScore.png}
-
-
-
-
+asdfasdfjas;df;fakj;
 
 \section{Conclusion and Future Directions}
 
@@ -171,4 +184,5 @@ Some words about the other previous figure.
 \bibliography{bibliography.bib}
 
 \end{multicols}
+
 \end{document}
