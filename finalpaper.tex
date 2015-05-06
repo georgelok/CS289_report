@@ -138,46 +138,66 @@ One more thing we should mention about Pacman is that in the case of strategy 4 
 	\label{fig:goodheuristic}
 \end{figure}
 
+\begin{figure}[H]
+	\includegraphics[width=\columnwidth]{maptogether.png}
+	\caption{Map Together}
+	\label{fig:maptogether}
+\end{figure}
+
+\begin{figure}[H]
+	\includegraphics[width=\columnwidth]{mapcorners.png}
+	\caption{Map Corners}
+	\label{fig:mapcorners}
+\end{figure}
+
+
 This heuristic consists of two features. The first feature pertains to the distance between the ghost and Pacman. The second heuristic can be described as the total number of positions that are unsafe for pacman to be in, within a radius $r$. A position is unsafe if a ghost needs only one action to get there. To illustrate this, we can look at the following two images where the blue dots represent all the safe positions for Pacman within radius 4 and the red dots represent all the unsafe positions within radius 4. In figure \ref{fig:badheuristic}, the ghosts are close to each other so they only make seven dots unsafe. In figure \ref{fig:goodheuristic}, the ghosts are trapping pacman and they make 15 dots unsafe.\\ 
 
 In the end, we settled on the following heuristic for each state $s$:
 $$h(s) = u - 1.5d$$ Where $u$ is the number of unsafe positions in state $s$ within radius $r$, and $d$ is the distance to Pacman. This heuristic incentivizes both getting closer to Pacman (in order to minimize the distance and get within the radius $r$), as well as getting further away from each other.
 
-\begin{figure}
-	\includegraphics[width=\columnwidth]{maptogether.png}\\
-	\caption{Map Together}
-	\label{fig:maptogether}
-\end{figure}
 
-\begin{figure}
-	\includegraphics[width=\columnwidth]{mapcorners.png}\\
-	\caption{Map Corners}
-	\label{fig:mapcorners}
-\end{figure}
 
 \subsubsection{Experiments}
 We ran each algorithm for 100 games with 2, 3 and 4 ghost agents for each of two initial configurations. In the first initial configuration, all ghosts started off very close to each other in the top left corner of the map. In the second initial configuration, ghosts started off each at a corner of the map. The initial configurations are shown below for 4 ghosts
 
 \subsection{Second Setting}
 
+\subsubsection{Berkeley Modifications}
+When we load in a map, we not only precompute the shortest distances between any two positions in the map, but we precompute a sight grid which determines for every pair of positions if two agents can see each other (i.e. they are directly vertical or horizontal from each other and there is no wall between them) create a trail grid, which allows ghosts at a position to see how much trail has been left. Every time Pacman makes his turn, our system simulates trail decay by dividing all trail values by 1.25.  
+
 \subsubsection{Layouts}
-For stigmergy, we modified the classic layout to be a big larger and to remove any 2x2 open spaces (so that everything consist of corridors or intersections).  
 
-\begin{figure}
-	\includegraphics[width=\columnwidth]{maptogether.png}\\
-	\caption{Map Together}
-	\label{fig:maptogether}
+
+For stigmergy, we modified the base medium classic layout from the Berkeley framework to be a big larger and to remove any 2x2 open spaces (so that everything consist of corridors or intersections).   
+
+For this layout, we have two different stating locations for the ghosts and paceman.  One has the ghosts start in the center of the map with Pacman at the bottom, and the other has ghosts start in the
+
+\begin{figure}[H]
+	\includegraphics[width=\columnwidth]{StigmergyClassic1.png}
+	\caption{Stigmergy Layout 1: Ghosts in Center}
+	\label{fig:stigmap1}
 \end{figure}
 
-\begin{figure}
-	\includegraphics[width=\columnwidth]{mapcorners.png}\\
+
+\begin{figure}[H]
+	\includegraphics[width=\columnwidth]{mapcorners.png}
 	\caption{Map Corners}
-	\label{fig:mapcorners}
+	\label{fig:stigmap2}
 \end{figure}
 
+
+\subsubsection{Algorithm}
+
+\begin{enumerate}[leftmargin=0.25cm]
+\item
+test
+
+\end{enumerate}
 
 \subsubsection{Experiments}
-We ran each algorithm for 50 games with 4 ghost agents.  
+
+For 2,3,4 ghost on both layouts, we performed 50 trials each.  
 
 \section{Results and Discussion}
 
