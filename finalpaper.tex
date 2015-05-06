@@ -49,7 +49,7 @@ We introduce different collaboration policies for a pack of predators chasing a 
 In nature, we observe that predator animals (including human beings) often collaborate when chasing a prey. This is because in some settings, a team of collaborating predators can achieve outcomes that separated individuals cannot, such as outcomes resulting from trapping behavior. However, collaboration nearly always exhibits large costs. First, collaborating agents have to split their rewards with their collaborators. In the animal world, this means gaining fewer resources; in law enforcement, this may mean receiving less credit for capturing criminals. Furthermore, collaboration always requires a form of coordination, and coordination is expensive. For example, we can consider ``perfect collaboration", whereby many predator agents act as a single unit that makes a single decision involving the movement of every agent in the team. This is essentially the same as having a centralized controller or a brain that directs each agent in the team. Such a centralized system though is not scalable, and there has been much research directed at developing scalable multi-agent systems in which computation is distributed among agents. 
 
 In this paper, we assume that predators consider each other as collaborators instead of competitors, and they strive jointly to maximize an aggregate reward, meaning that all agents benefit equally when the prey is captured, regardless of which predator captured it. We also disregard the free-rider problem and assume that all predators actively make an effort to help the team instead of relying on other collaborators and reaping the benefits of the capture. For our experiments, we used the Berkeley Pacman framework \cite{Pacman}. because it allows for very general predator/prey model simulations. We operate in two settings: In the first setting, all predators can observe each other and their prey at all times, whereas in the second setting, predators can only observe what is directly in their line of sight. In the first setting, we present six different collaboration strategies with varying degrees of collaborative cost and efficiency: 1- Fully centralized collaboration. 2- Fully centralized collaboration of loosely coupled subteams. 3- Encrypted communication of actions between predators. 4- Communication of actions between predators that can be overheard by a prey. 5- Individual actions while taking into account positions of other predators. 6- No collaboration at all. The first five of these strategies require the notion of trapping behavior, and one of the main contributions of this paper is a successful heuristic that leads to trapping behavior. In the second setting, agents leave stigmergic trails behind them that decay with time, this is reminiscent of many examples of stigmergic communication observed in nature (for example in foraging ants \cite{beckers1992trails}). We compare two alternative strategies that predators can use to interact with the stigmergic trails that others leave behind. 1- Avoid these trails in an attempt to split up effectively and capture the prey. 2- Follow these trails in an attempt to congregate and corner the prey when it is found.\\
-\indent The paper is organized into the following sections: Section 2 describes related work. Section 3 provides detailed descriptions with theoretical considerations of our six strategies in the first setting, and two strategies in the second setting. Section 4 describes our implementation using the Berkeley Pacman framework and the experiments we conducted. Section 5 presents our results and discusses them. Section 6 states our conclusions and future directions. 
+\indent The paper is organized into the following sections: Section 2 describes related work. Section 3 provides detailed descriptions with theoretical considerations of our six strategies in the first setting, and two strategies in the second setting. Section 4 describes our implementation using the Berkeley Pacman framework and the experiments we conducted. Section 5 presents our results and discusses them. Section 6 presents our conclusions and section 7 discusses future research directions. 
 
 \section{Related Work}
 
@@ -140,6 +140,18 @@ One more thing we should mention about Pacman is that in the case of strategy 4 
 	\label{fig:goodheuristic}
 \end{figure}
 
+
+
+This heuristic consists of two features. The first feature pertains to the distance between the ghost and Pacman. The second heuristic can be described as the total number of positions that are unsafe for pacman to be in, within a radius $r$. A position is unsafe if a ghost needs only one action to get there. To illustrate this, we can look at the following two images where the blue dots represent all the safe positions for Pacman within radius 4 and the red dots represent all the unsafe positions within radius 4. In figure \ref{fig:badheuristic}, the ghosts are close to each other so they only make seven dots unsafe. In figure \ref{fig:goodheuristic}, the ghosts are trapping pacman and they make 15 dots unsafe.\\ 
+
+In the end, we settled on the following heuristic for each state $s$:
+$$h(s) = u - 1.5d$$ Where $u$ is the number of unsafe positions in state $s$ within radius $r$, and $d$ is the distance to Pacman. This heuristic incentivizes both getting closer to Pacman (in order to minimize the distance and get within the radius $r$), as well as getting further away from each other.
+
+
+
+\subsubsection{Experiments}
+We ran each algorithm for 100 games with 2, 3 and 4 ghost agents for each of two initial configurations. In the first initial configuration, all ghosts started off very close to each other in the top left corner of the map. In the second initial configuration, ghosts started off each at a corner of the map. The initial configurations are shown below for 4 ghosts
+
 \begin{figure}[H]
 	\includegraphics[width=\columnwidth]{maptogether.png}
 	\caption{Map Together}
@@ -152,16 +164,6 @@ One more thing we should mention about Pacman is that in the case of strategy 4 
 	\label{fig:mapcorners}
 \end{figure}
 
-
-This heuristic consists of two features. The first feature pertains to the distance between the ghost and Pacman. The second heuristic can be described as the total number of positions that are unsafe for pacman to be in, within a radius $r$. A position is unsafe if a ghost needs only one action to get there. To illustrate this, we can look at the following two images where the blue dots represent all the safe positions for Pacman within radius 4 and the red dots represent all the unsafe positions within radius 4. In figure \ref{fig:badheuristic}, the ghosts are close to each other so they only make seven dots unsafe. In figure \ref{fig:goodheuristic}, the ghosts are trapping pacman and they make 15 dots unsafe.\\ 
-
-In the end, we settled on the following heuristic for each state $s$:
-$$h(s) = u - 1.5d$$ Where $u$ is the number of unsafe positions in state $s$ within radius $r$, and $d$ is the distance to Pacman. This heuristic incentivizes both getting closer to Pacman (in order to minimize the distance and get within the radius $r$), as well as getting further away from each other.
-
-
-
-\subsubsection{Experiments}
-We ran each algorithm for 100 games with 2, 3 and 4 ghost agents for each of two initial configurations. In the first initial configuration, all ghosts started off very close to each other in the top left corner of the map. In the second initial configuration, ghosts started off each at a corner of the map. The initial configurations are shown below for 4 ghosts
 
 \subsection{Second Setting}
 
@@ -228,30 +230,37 @@ For scoring our algorithms, the Berkeley framework has Pacman automatically gain
 \section{Results and Discussion}
 
 \subsection{First Setting}
-Now we will discuss our results from running the simulations described in experimental setup. 
+Now we will discuss our results from running the simulations described in the experimental setup. 
 
 We first examine the amount of time it takes for an agent to compute an action under each algorithm. As Figure \ref{fig:averagecomputation} shows, the computation time to run algorithm 1 far exceeds the complexity of the other approaches. Algorithms 2 to four show relative similarities in complexity, which we certainly expect for algorithms 3 and 4; for algorithm 2 it is dependent on the team-size and in this setting with a team size of 2, we see a rough corespondence with algorithms 3 and 4. Algorithms 5 takes significantly less time than the other approaches, and algorithm 6 appears to take an almost negligible amount of time. 
 \begin{figure}[H]
-	\includegraphics[width=\columnwidth]{time.png}
+	\includegraphics[scale=0.45]{time.png}
 	\caption{Average Computation Time Per Step}
 	\label{fig:averagecomputation}
 \end{figure}	
 
-\begin{figure}[H]
-	\includegraphics[width=\columnwidth]{cornersteps.png}
-	\caption{Average Number of Steps from Corner}
-	\label{fig:averagenumstepscorner}
-\end{figure}
+We first examine the amount of time it takes for an agent to compute an action under each algorithm. As Figure \ref{fig:averagecomputation} shows, the computation time to run algorithm 1 far exceeds the computational time of the other approaches. This is in line with the theoretical asymptotic complexity of algorithm 1 which is $O(M^N)$ and exponentially slower than the other approaches. As expected, algorithms 3 and 4 take about the same time per step as well. In theory, algorithm 2 should take a longer time per step to run than algorithms 3 and 4 (its asymptotic runtime was exponentially larger), but for such small team sizes (a team of 1 and a team of 2), the exponent is dominated by the larger polynomial. Finally, as expected, algorithm 5 takes significantly less time than the other approaches, and algorithm 6 appears to take an almost negligible amount of time. 
 
 \begin{figure}[H]
-	\includegraphics[width=\columnwidth]{leftsteps.png}
+	\includegraphics[scale=0.45]{leftsteps.png}
 	\caption{Average Number of Steps from Top Left}
 	\label{fig:averagenumstepsleft}
 \end{figure}
 
-We next want to explore the number of steps it takes for ghosts to capture Pacman according to the algorithm they follow under each of our initializations. In this case, the fewer steps it takes to capture Pacman, the better our performance is. As we would expect in both cases, algorithm 1 takes by far the fewest amount of steps, and algorithm 6 takes the largest amount of steps. However, Figure \ref{fig:averagenumstepscorner} and Figure \ref{fig:averagenumstepsleft} reveal that surprisingly algorithm 2 takes a much higher amount of steps to capture Pacman than the other approaches (all of which seem to scale in order with their complexity). We will discuss this deviation from our expectations shortly. SAMIIIII
+\begin{figure}[H]
+	\includegraphics[scale=0.45]{cornersteps.png}
+	\caption{Average Number of Steps from Corner}
+	\label{fig:averagenumstepscorner}
+\end{figure}
 
-Now we will transition to examine our aggregated results over all of our results through the following tables. 
+
+
+\noindent We next want to explore the number of steps it takes for ghosts to capture Pacman according to the algorithm they follow under each of our initializations. In this case, the fewer steps it takes to capture Pacman, the better our performance is. Before we start discussing our results, our intuition tells us that algorithm 1 should perform best because every possible combination of actions is evaluated and if our heuristic is a good proxy for capturing Pacman, then there is no scenario where algorithm 1 is consistently beaten by another algorithm. Similarly, we would expect algorithm 2 to perform well but not as well as algorithm 1. It's not clear a priori whether algorithm 2 performs better than algorithm 3 or not. It's also not clear that algorithm 3 performs better than algorithm 4 although we would expect it to as long as Pacman's overhearing causes it to take smarter actions. We would also expect algorithm 3 to perform better than algorithm 5 because the heuristics would be evaluated based on more accurate states of the world that are guaranteed by other ghosts through communication. Finally, we would expect algorithm 6 to perform the worst between all algorithms because there is no explicit trapping behavior and it is theoretically possible that ghosts can chase Pacman Ad Infinitum (it it wasn't for a slight element of randomness that we incorporated in our action decision). \\
+Looking at the results in Figure 9 and 10, we notice that in both initial configurations, algorithm 1 takes the fewest amount of steps, and algorithm 6 takes the largest amount of steps (as we had expected). However, Figure \ref{fig:averagenumstepsleft} and Figure \ref{fig:averagenumstepscorner} reveal that surprisingly algorithm 2 takes a much higher amount of steps to capture Pacman than the other approaches except algorithm 6 (all of which seem to scale in inverse order of their complexity). We can explain this by noting that each subteam in algorithm 2 does not even take into account the positions of other ghosts outside of the subteam. This turns out to drastically affect the success rate because even in the case of algorithm 5 where agents do not explicitly collaborate, there is at least an implicit coordination between their actions even if that coordination is not entirely accurate.\\
+We also notice that algorithm 4 seems to consistently behave slightly worse than algorithm 3, so Pacman's overhearing does actually allow to take smarter decisions to counter the coordination of ghost agents. The difference in performance is not large enough to make algorithm 5 more successful than algorithm 4 so there is still some value in unencrypted communication so long as the $S$ cost mentioned earlier is high enough to warrant the dip in the success rate between algorithms 3 and 4.\\
+A very important observation we can make by comparing these two figures is that while the ordering of the algorithms is the same for both initial configurations, we notice that the spread between the algorithms is greatly reduced when the ghosts start at different corners. In fact, the difference between algorithms 1 and 6 when all ghosts start at top left is 18.5 steps on average, whereas it is only 8.6 on average when the ghosts start at different corners. The same pattern follows for all other algorithms, they all perform better in the corners initialization configuration, but the differences between the algorithms is greatly reduced for the corners initialization. For the corners configuration in particular, we can interpret this finding by observing the actual games and noticing that Pacman (who tries to minimize the distance to the closest ghost) has no preferred direction to take since ghosts are coming from all directions, so in a way, Pacman is already trapped even without any explicit trapping heuristics built into the ghost agents. From this observation, we conclude that depending on the initial configuration, the additional benefit from employing a more complex algorithm might not be worth the added time complexity anymore.\\\\
+
+We transition now to examining our aggregated results collected for each of 2, 3, and 4 ghosts, presented in the tables in Figures 11, 12 and 13. 
 
 \end{multicols}
 
@@ -279,7 +288,16 @@ Now we will transition to examine our aggregated results over all of our results
 
 \begin{multicols}{2}
 
-Some words about the tables. SAMMMIIIIII
+From Figure 11, we notice that the average time per step is constant for algorithm 6 regardless of the number of ghosts. For all other algorithms, the average time per step grows with the number of ghosts at rates corresponding with our predictions through the runtime complexity of each algorithm.\\
+From Figures 12 and 13, we notice that as noted before, the spread between algorithms decreases when the ghosts are initially at different corners (for all values of the number of ghosts). Interestingly, we also notice that all algorithms seem to perform better when the number of ghosts increases, and the spread between algorithms (from best to worst) seems to also decrease as the number of ghosts increases. This is particularly significant because it means that as the number of ghosts increases, a distributed algorithm like algorithm 5 becomes closer and closer in performance to algorithm 1. Couple that finding with the fact that centralized systems becomes much less scalable and tractable for larger values of $N$, and we conclude that it's always better to pick a distributed algorithm like algorithm 5 as the number of predators increases.\\
+
+Finally, we are interested in assessing the accuracy of our heuristic as a proxy for likelihood of capture success. We compare the progression of heuristic values in a game for each of the algorithms from 1 to 5. Note that we ignore algorithm 6 because there is no heuristic component to it.\\
+\begin{figure}[H]
+	\includegraphics[scale=0.45]{heuristicvalues.png}
+	\caption{Heuristic value progression per algorithm}
+\end{figure}
+
+\noindent In Figure 14, we notice that the lines end when a heuristic value of close to 12 is reached. This indicates that the game has ended because the capture was successful, so the heuristic value is consistent and accurate when the ghosts are about to capture Pacman. We also notice that the lines are monotonically increasing for the most part (this is not as clear for algorithm 3 but it is probably particular to that specific game perhaps because of the randomness that we introduced into the decision making). This means that the heuristic value is successfully guiding the agents towards success. These two observations lead us to conclude that our heuristic very accurately measures the predators' improvement toward capturing the prey. 
 
 \subsection{Second Setting}
 
@@ -328,12 +346,23 @@ Examining figures \ref{fig:stigmergyresultslayout1} and \ref{fig:stigmergyresult
 \pagebreak
 \begin{multicols}{2}
 
-\section{Conclusion and Future Directions}
+\section{Conclusion}
+We present six different algorithms with varying degrees of collaborative complexity that can be employed by a pack of predators in a predator/prey multi-agent system. By modeling the system as a Pacman vs Ghosts game and simulating runs for each of our algorithms, we have reached the following main conclusions: 1- The algorithms generally succeed proportionally to their complexity. 2- The difference between the success of the algorithms is greatly reduced in a starting configuration where predators are scattered as opposed to one in which they are close to each other. 3- The difference between the success of the algorithms is reduced when the number of predators increases. As a result, a large pack of predators should employ distributed algorithms because their tractability greatly outweighs their performance deficiencies. 4- The heuristic that we present for trapping a prey is very accurate.\\
+Furthermore, we present GEORRGEEEEEE\\\\ 
+
+\section{Future Directions}
+The work we conducted in this project and some of the results we observed have inspired us to think of future directions we would like to take this research, given additional time.\\
+As discussed earlier, we were initially surprised to see how poorly algorithm 2, where we break up our agents into sub-teams, performed relative to the other approaches and our expectations. When trying to reason through why this may be the case, we realized that all the ghosts in a particular sub-team do not acknowledge in any manner the ghost agents in the other sub-teams and are ignorant of even their positions, let alone their intentions. In a future work, we would like to test a few different adaptions of this approach. In the first approach, agents in a sub-team would be able to see ghost agents in another sub-team and not explicitly communicate with them, but would attempt to reason where they might go (similar to what individual agents do in algorithm 5). In a different approach, we would allow the subteams to communicate with each other. This follows work from Roth et al. where individual agents decide whether to communicate with one another based on whether they believe it will change the joint-action taken by the team; similarly, in this case sub-teams will choose to communicate with one another or not based on whether the sub-team believes it will change the joint action of all the ghost agents.\\ 
+Another potential future direction of this project that we are very excited about involves coming up with a hybrid algorithm that has all six of our collaboration algorithms in its arsenal and decides on which one to apply based on the state of the game. The motivation behind this approach is the realization that collaboration and trapping behavior have very different benefits depending on the state of the game and the relative positions of the agents. For example, if all the ghost agents are very far away from Pacman, then it may not be worth the computational cost to use full communication approaches like algorithm 1, and instead the agents should simply try to get closer to Pacman like in algorithm 6. However, when the ghost agents are close enough to actually employ trapping behavior, then we may want to switch our approach to allow full communication, as the computational complexity may now be justified in light of potentially optimized performance. We believe that future work that tries to devise an algorithm, perhaps through reinforcement learning, that decides which approach to use based on the state of the game would be extremely interesting and useful.
 
 \section{Division of Work}
+Sami and Devvret worked together on setting 1 and all of its related components. Sami implemented the graph conversion and the pre-computation of distances as well as both modes of Pacman (regular Alpha Beta pruning agent and Overhearing minimax agent in the case of algorithm 4). Dev focused on modifying the game framework to allow for each of our six scenarios. Sami and Dev implemented algorithms 5 and 6 together, as they were the first approaches implemented and benefited from early collaboration and discussion. After that, Sami led the effort for the implementations of algorithms 1 and 4 and Dev led the effort for the implementations of algorithms 2 and 3. Both Sami and Dev worked together to test different ideas for heuristics, and derived the heuristic currently in use and tested its rigor across the different algorithms. When conducting the simulations to generate our results, Dev worked more so on data collection and parsing, while Sami worked on data analysis and visualization.  
+
+George worked exclusively on setting 2, and all algorithms developed and results generated related to stigmergy were a result of his efforts.
 
 \bibliographystyle{plain}
 \bibliography{bibliography.bib}
+
 
 \end{multicols}
 
