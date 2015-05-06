@@ -195,9 +195,8 @@ For this layout, we have two different starting locations for the ghosts and pac
 As our comparison algorithm, we implemented a BlindDirectionalGhost (see figure \ref{fig:blindghost}). A BlindDirectionalGhost acts randomly until it sights Pacman.  Upon sighting Pacman, it with high probability the shortest to Pacman's current position.  If BlindDirectionalGhost loses sight of Pacman, it keeps track of Pacman's last known position.  Upon arrive at the last known position, if BlindDirectionalGhost has not regained sight of Pacman, it clears it's knowledge of Pacman's position and acts randomly again.
 \begin{figure}[H]
 	\includegraphics[width=\columnwidth]{BlindDirectionalGhost.png}
-	\caption{BlindDirectionalGhost. Note the lack of trails.
-	Video: \protect\url{www.youtube.com} }
-
+	\caption{BlindDirectionalGhost. Note the lack of trails.}
+ 	\protect\url{www.youtube.com/watch?v=dVFe-fwSLTs} 
 	\label{fig:blindghost}
 \end{figure}
 
@@ -205,8 +204,8 @@ For our RepulseStigmergyGhost  (see figure \ref{fig:repulseghost}), on seeing Pa
 
 \begin{figure}[H]
 	\includegraphics[width=\columnwidth]{RepulseGhost.png}
-	\caption{RepulseStigmergyGhost. Note the creation of trails despite Pacman not being in sight at all.
-	Video: \protect\url{www.youtube.com} }
+	\caption{RepulseStigmergyGhost. Note the creation of trails despite Pacman not being in sight at all.}
+	\protect\url{www.youtube.com/watch?v=3o6VXkEG1uw} 
 	\label{fig:repulseghost}
 \end{figure}
 
@@ -214,8 +213,8 @@ For our AttractStigmergyGhost (see figure \ref{fig:attractghost}), on seeing Pac
 
 \begin{figure}[H]
 	\includegraphics[width=\columnwidth]{AttractGhost.png}
-	\caption{AttractStigmergyGhost. Note the creation of trails when Pacman is in sight but not when he isn't.
-	Video: \protect\url{www.youtube.com} }
+	\caption{AttractStigmergyGhost. Note the creation of trails when Pacman is in sight but not when he isn't.}
+	\protect\url{www.youtube.com/watch?v=qcaXzzpNs9s} 
 	\label{fig:attractghost}
 \end{figure}
 
@@ -252,8 +251,6 @@ We first examine the amount of time it takes for an agent to compute an action u
 	\caption{Average Number of Steps from Corner}
 	\label{fig:averagenumstepscorner}
 \end{figure}
-
-
 
 \noindent We next want to explore the number of steps it takes for ghosts to capture Pacman according to the algorithm they follow under each of our initializations. In this case, the fewer steps it takes to capture Pacman, the better our performance is. Before we start discussing our results, our intuition tells us that algorithm 1 should perform best because every possible combination of actions is evaluated and if our heuristic is a good proxy for capturing Pacman, then there is no scenario where algorithm 1 is consistently beaten by another algorithm. Similarly, we would expect algorithm 2 to perform well but not as well as algorithm 1. It's not clear a priori whether algorithm 2 performs better than algorithm 3 or not. It's also not clear that algorithm 3 performs better than algorithm 4 although we would expect it to as long as Pacman's overhearing causes it to take smarter actions. We would also expect algorithm 3 to perform better than algorithm 5 because the heuristics would be evaluated based on more accurate states of the world that are guaranteed by other ghosts through communication. Finally, we would expect algorithm 6 to perform the worst between all algorithms because there is no explicit trapping behavior and it is theoretically possible that ghosts can chase Pacman Ad Infinitum (it it wasn't for a slight element of randomness that we incorporated in our action decision). \\
 Looking at the results in Figure 9 and 10, we notice that in both initial configurations, algorithm 1 takes the fewest amount of steps, and algorithm 6 takes the largest amount of steps (as we had expected). However, Figure \ref{fig:averagenumstepsleft} and Figure \ref{fig:averagenumstepscorner} reveal that surprisingly algorithm 2 takes a much higher amount of steps to capture Pacman than the other approaches except algorithm 6 (all of which seem to scale in inverse order of their complexity). We can explain this by noting that each subteam in algorithm 2 does not even take into account the positions of other ghosts outside of the subteam. This turns out to drastically affect the success rate because even in the case of algorithm 5 where agents do not explicitly collaborate, there is at least an implicit coordination between their actions even if that coordination is not entirely accurate.\\
@@ -305,7 +302,7 @@ For our stigmergy tests, we recorded the scores and calculated the averages and 
 
 Examining figure \ref{fig:stigmergystats1} and figure \ref{fig:stigmergystats2} reveal that both stigmergy algorithms perform significantly better than the BlindDirectionalGhost.  Furthermore, the success of the Stigmergy algorithms seem to scale rapidly with the number of ghosts: 4 ghosts are sufficient to prevent failure to capture Pacman, and average scores for both layouts near or exceed 400 with 4 ghosts. 
 
-Layouts had a small effect on the stigmergy algorithms, in particular, both algorithms perform appreciably better on layout 2 with 3 ghosts.  However, BlindDirectionalGhost does extremely poorly with 2 ghosts on layout 2, failing every time.
+Layouts had a small effect on the stigmergy algorithms, in particular, both algorithms perform appreciably better on layout 2 with 3 ghosts.  However, BlindDirectionalGhost does extremely poorly with 2 ghosts on layout 2, failing every time. 
 
 Examining figures \ref{fig:stigmergyresultslayout1} and \ref{fig:stigmergyresultslayout2} tell similar stories.  
 
@@ -347,7 +344,8 @@ Examining figures \ref{fig:stigmergyresultslayout1} and \ref{fig:stigmergyresult
 
 \section{Conclusion}
 We present six different algorithms with varying degrees of collaborative complexity that can be employed by a pack of predators in a predator/prey multi-agent system. By modeling the system as a Pacman vs Ghosts game and simulating runs for each of our algorithms, we have reached the following main conclusions: 1- The algorithms generally succeed proportionally to their complexity. 2- The difference between the success of the algorithms is greatly reduced in a starting configuration where predators are scattered as opposed to one in which they are close to each other. 3- The difference between the success of the algorithms is reduced when the number of predators increases. As a result, a large pack of predators should employ distributed algorithms because their tractability greatly outweighs their performance deficiencies. 4- The heuristic that we present for trapping a prey is very accurate.
-Furthermore, we demonstrate that our two stigmergy algorithms are 
+
+Furthermore, we demonstrate that our two stigmergy algorithms are significantly better than our BlindDirectionalGhost benchmark.  Our stigmergy algorithm scale with 
 
 \section{Future Directions}
 The work we conducted in this project and some of the results we observed have inspired us to think of future directions we would like to take this research, given additional time.\\
