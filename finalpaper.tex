@@ -9,6 +9,7 @@
 \usepackage{graphicx}
 \usepackage{tabto}
 \usepackage{array,url,kantlipsum}
+\usepackage{float}
 
 \begin{document}
 \twocolumn[{%
@@ -103,10 +104,60 @@ This heuristic consists of two features. The first feature pertains to the dista
 In the end, we settled on the following heuristic for each state $s$:
 $$h(s) = u - 1.5d$$ Where $u$ is the number of unsafe positions in state $s$ within radius $r$, and $d$ is the distance to Pacman. This heuristic incentivizes both getting closer to Pacman (in order to minimize the distance and get within the radius $r$), as well as getting further away from each other.
 
-\subsubsection{Experiments}We ran each algorithm for 100 games with 2, 3 and 4 ghost agents for each of two initial configurations. In the first initial configuration, all ghosts started off very close to each other in the top left corner of the map. In the second initial configuration, ghosts started off each at a corner of the map. The initial configurations are shown below for 4 ghosts:\\\\\includegraphics[scale=0.4]{maptogether.png}\\
-\includegraphics[scale=0.4]{mapcorners.png}\\
+\begin{figure}
+	\includegraphics[width=\columnwidth]{maptogether.png}\\
+	\caption{Map Together}
+	\label{fig:maptogether}
+\end{figure}
+
+\begin{figure}
+	\includegraphics[width=\columnwidth]{mapcorners.png}\\
+	\caption{Map Corners}
+	\label{fig:mapcorners}
+\end{figure}
+
+\subsubsection{Experiments}
+We ran each algorithm for 100 games with 2, 3 and 4 ghost agents for each of two initial configurations. In the first initial configuration, all ghosts started off very close to each other in the top left corner of the map. In the second initial configuration, ghosts started off each at a corner of the map. The initial configurations are shown below for 4 ghosts:\\\\
+
+
 \subsection{Second Setting}
+
+\pagebreak
+
 \section{Results and Discussion}
+
+Now we will discuss our results from running the simulations described in experimental setup. 
+
+%\includegraphics[width=\columnwidth]{time.png}
+
+\begin{figure}[H]
+	\includegraphics[width=\columnwidth]{time.png}
+	\caption{Average Computation Time Per Step}
+	\label{fig:averagecomputation}
+\end{figure}	
+
+Some words about the previous figure. 
+
+\begin{figure}[H]
+	\includegraphics[width=\columnwidth]{cornersteps.png}
+	\caption{Average Number of Steps}
+	\label{fig:averagenumsteps}
+\end{figure}
+
+adsfasdfsadf
+
+\begin{figure*}[t]
+	\includegraphics[width=\textwidth]{CornersScore.png}
+	\caption{Corner Steps}
+	
+\end{figure*}
+
+Some words about the other previous figure. 
+
+%\includegraphics[width=\columnwidth]{CornersScore.png}
+
+
+
 
 
 \section{Conclusion and Future Directions}
