@@ -289,7 +289,7 @@ We transition now to examining our aggregated results collected for each of 2, 3
 \begin{multicols}{2}
 
 From Figure 11, we notice that the average time per step is constant for algorithm 6 regardless of the number of ghosts. For all other algorithms, the average time per step grows with the number of ghosts at rates corresponding with our predictions through the runtime complexity of each algorithm.\\
-From Figures 12 and 13, we notice that as noted before, the spread between algorithms decreases when the ghosts are initially at different corners (for all values of the number of ghosts). Interestingly, we also notice that all algorithms seem to perform better when the number of ghosts increases, and the spread between algorithms (from best to worst) seems to also decrease as the number of ghosts increases. This is particularly significant because it means that as the number of ghosts increases, a distributed algorithm like algorithm 5 becomes closer and closer in performance to algorithm 1. Couple that finding with the fact that centralized systems becomes much less scalable and tractable for larger values of $N$, and we conclude that it's always better to pick a distributed algorithm like algorithm 5 as the number of predators increases.\\
+From Figures 12 and 13, we notice that as noted before, the spread between algorithms decreases when the ghosts are initially at different corners (for all values of the number of ghosts). Interestingly, we also notice that all algorithms seem to perform better when the number of ghosts increases, and the spread between algorithms (from best to worst) seems to also decrease as the number of ghosts increases. This is particularly significant because it means that as the number of ghosts increases, a distributed algorithm like algorithm 5 becomes closer and closer in performance to algorithm 1. Couple that finding with the fact that centralized systems becomes much less scalable and tractable for larger values of $N$, and we conclude that it's always better to pick a distributed algorithm like algorithm 5 as the number of predators increases.
 
 Finally, we are interested in assessing the accuracy of our heuristic as a proxy for likelihood of capture success. We compare the progression of heuristic values in a game for each of the algorithms from 1 to 5. Note that we ignore algorithm 6 because there is no heuristic component to it.\\
 \begin{figure}[H]
@@ -310,7 +310,6 @@ Layouts had a small effect on the stigmergy algorithms, in particular, both algo
 Examining figures \ref{fig:stigmergyresultslayout1} and \ref{fig:stigmergyresultslayout2} tell similar stories.  
 
 \end{multicols}
-\pagebreak
 \begin{figure}[H]
 	\includegraphics[width=0.5 \columnwidth]{stigmergytrendclassicscore.png}
 	\includegraphics[width= 0.5 \columnwidth]{stigmergytrendclassicfail.png}
