@@ -15,7 +15,7 @@
   \bfseries \abstractname\vspace{-.5em}\vspace{0pt}
   \end{center}
   \list{}{%
-    \setlength{\leftmargin}{0.1in}% <---------- CHANGE HERE
+    \setlength{\leftmargin}{0in}% <---------- CHANGE HERE
     \setlength{\rightmargin}{\leftmargin}%
   }%
   \item\relax}
@@ -55,13 +55,13 @@ In this paper, we assume that predators consider each other as collaborators ins
 
 Although there hasn’t been a significant amount of work explicitly exploring the tradeoffs between collaboration, communication and complexity in the settings that we chose to explore, our work was certainly motivated by a few different key papers we had read. 
 
-In \textit{ Group Size, individual role differentiation and effectiveness of cooperation in a homogeneous group of hunters }, Escobedo et al. explore the emergence of cooperation in wolf-pack hunting using a very simple particle-based computational model. The setting that they were trying to model was similar to ours, as it involved multiple predatory agents collaborating together to try and capture a quarry and the authors were able to show that they could model the dynamics of how a wolf-pack goes about this task by modeling the interactions between wolves as each agent only trying to minimize their distance to the prey while maximizing its distance from the other wolves. Escobedo et al. showed that these simple interactions were able to explain much of the more complex collaborative behavior wolf-packs tended to demonstrate and this fact helped inform how we thought about trapping heuristics for our collaborative ghost agents, which we will cover later.
+In \textit{ Group Size, individual role differentiation and effectiveness of cooperation in a homogeneous group of hunters }, Escobedo et al. explore the emergence of cooperation in wolf-pack hunting using a very simple particle-based computational model \cite{escobedo2014group}. The setting that they were trying to model was similar to ours, as it involved multiple predatory agents collaborating together to try and capture a quarry and the authors were able to show that they could model the dynamics of how a wolf-pack goes about this task by modeling the interactions between wolves as each agent only trying to minimize their distance to the prey while maximizing its distance from the other wolves. Escobedo et al. showed that these simple interactions were able to explain much of the more complex collaborative behavior wolf-packs tended to demonstrate and this fact helped inform how we thought about trapping heuristics for our collaborative ghost agents, which we will cover later.
 
-On a different side of our project, \textit{Reasoning About Joint Beliefs for Execution-Time Communication Decisions } by Roth et al. introduced us to the notion of thinking about the cost of communication in terms of run-time complexity and its relative benefit in the specific collaboration setting. In their paper, the authors try to transform the typically highly intractable multi-agent POMDP into a more feasible problem by allowing communication when it’s believed to improve team performance. In doing so, they think explicitly about the cost and benefit of communication versus performance and also introduce us to a thinking about cost in terms of computational complexity, although in their case its more so to differentiate run-time versus plan-time costs. 
+On a different side of our project, \textit{Reasoning About Joint Beliefs for Execution-Time Communication Decisions } by Roth et al. introduced us to the notion of thinking about the cost of communication in terms of run-time complexity and its relative benefit in the specific collaboration setting \cite{roth2005reasoning}. In their paper, the authors try to transform the typically highly intractable multi-agent POMDP into a more feasible problem by allowing communication when it’s believed to improve team performance. In doing so, they think explicitly about the cost and benefit of communication versus performance and also introduce us to a thinking about cost in terms of computational complexity, although in their case its more so to differentiate run-time versus plan-time costs.
 
-As we have mentioned, we also explore a different setting where ghosts use stigmergic communication in order to disseminate information. The inspiration for this comes from \textit{Trails and U-turns in the Selection of a Path by the Ant Lasius niger} by Beckers et al. In this paper, the authors discuss trail-laying algorithms employed by ant colonies that expedite foraging behaviors and explore tendencies of the ants to select certain paths, for example ones they had used previously. This inspired the section of our work where ghost agents lay trails of “pheromones” once they see Pacman, which can be thought of as a food source and we explore different manners by which other foragers could use these signals. 
+As we have mentioned, we also explore a different setting where ghosts use stigmergic communication in order to disseminate information. The inspiration for this comes from \textit{Trails and U-turns in the Selection of a Path by the Ant Lasius niger} by Beckers et al  \cite{beckers1992trails}. In this paper, the authors discuss trail-laying algorithms employed by ant colonies that expedite foraging behaviors and explore tendencies of the ants to select certain paths, for example ones they had used previously. This inspired the section of our work where ghost agents lay trails of “pheromones” once they see Pacman, which can be thought of as a food source and we explore different manners by which other foragers could use these signals. 
 
-The last paper we also felt was relevant to the discussion was \textit{ Collaborating and Learning Predators on a Pursuit Scenario }. Although this paper focused more on predator agents learning the best way to catch prey (either stationary or moving in their scenario) across only two scenarios, full centralization and full decentralization, we see strong similarities behind the motivation of both of our projects. As Fredivianus et al. also acknowledge in this paper, learning how to properly design these Multi-Agent Systems addresses some of the concerns over tradeoffs in distributed artificial intelligence and planning. 
+The last paper we also felt was relevant to the discussion was \textit{ Collaborating and Learning Predators on a Pursuit Scenario } \cite{fredivianus2010collaborating}. Although this paper focused more on predator agents learning the best way to catch prey (either stationary or moving in their scenario) across only two scenarios, full centralization and full decentralization, we see strong similarities behind the motivation of both of our projects. As Fredivianus et al. also acknowledge in this paper, learning how to properly design these Multi-Agent Systems addresses some of the concerns over tradeoffs in distributed artificial intelligence and planning. 
 
  
 \section{Description of Proposed Strategies}
@@ -95,17 +95,15 @@ In the first setting, we propose six different strategies. Here they are in decr
 \end{enumerate}
 
 \subsection{Second Setting}
-In the second setting, we propose two different strategies revolving around the use of stigmergy.  In this setting, as ghosts do not know where Pacman is, they need a way to communicate with each other  The basic principle is that ghosts leave trails that other ghosts can sense when they are on top of them. The amount of trail left can depend on when ghosts see Pacman.  Ghosts will with high probability chase after Pacman if they see them.  Ghosts keep track of Pacman's last known position, and are biased to go towards that position if they don't see Pacman.  This last known position is reset if they arrive at the position and do not see Pacman.
+In the second setting, we propose two different strategies revolving around the use of stigmergy.  In this setting, as ghosts do not know where Pacman is, they need a way to communicate with each other in order to find Pacman. The basic principle is that ghosts leave trails that other ghosts can sense when they are on top of them. The amount of trail left can depend on when ghosts see Pacman.  Ghosts will with high probability chase after Pacman if they see them.  Ghosts keep track of Pacman's last known position, and are biased to go towards that position if they don't see Pacman.  This last known position is reset if they arrive at the position and do not see Pacman.  Every time Pacman moves, the amount of trail decreases by a certain fraction.
 
 \begin{enumerate}[leftmargin=0.25cm]
 	\item Attractive Stigmergy\\
- 	As ghosts do not know where Pacman is, we try to use s In attractive stigmergy, we adhere to the basic idea of stigmergy as presented by Beckers et. al \cite{beckers1992trails}.   Ghosts do not lay trails unless they either see Pacman or have an idea where Pacman is.  They lay more trail if they see Pacman than if they only have an idea where Pacman is.  Ghosts are more likely to choose a path that has more trail on it.  Finally, to prevent backtracking and to prevent them from sticking together, ghosts explicitly are less likely to take the reverse direction of the last action they do and are less likely to make an action that puts them on top of another ghost.
+ 	In attractive stigmergy, we adhere to the basic idea of stigmergy as presented by Beckers et. al \cite{beckers1992trails}. The idea is that ghosts will be able to follow trails in order to track down Pacman easier and then more easily capture Pacman as a group.  The basic mechanism is as follows: ghosts do not lay trails unless they either see Pacman or have an idea where Pacman is.  They lay more trail if they see Pacman than if they only have an idea where Pacman is.  Ghosts are more likely to choose a path that has more trail on it.  Finally, to prevent backtracking and to prevent them from sticking together, ghosts explicitly are less likely to take the reverse direction of the last action they do and are less likely to make an action that puts them on top of another ghost.
 	
 	\item Repulsive Stigmergy
-	Taking advantage of the fact that we only need one ghost to capture Pacman, we reverse ghosts reaction to trails and have them be repulsed by the trails.  Ghosts always lay trail, but lay significantly more trail if they see Pacman. Ghost are more likely to choose a path that has less trail on it.  There's no need to prevent backtracking explicitly since the ghosts are unlikely to backtrack on their own trail.
+	Taking advantage of the fact that we only need one ghost to capture Pacman, we reverse ghosts' reaction to trails and have them avoid paths that already have trail.  Ghosts always lay trail, but lay more trail if they think they know where Pacman is and significantly more trail if they directly see Pacman. Ghosts are more likely to choose a path that has less trail on it.  There's no need to prevent backtracking explicitly since the ghosts are unlikely to backtrack on their own trail.
 \end{enumerate}
-
-// INSERT DIAGRAMS HERE WITH FLOWCHART OF STIGMERGY ALGORITHMS
 
 
 \section{Experimental Setup}
@@ -117,23 +115,24 @@ We simulated our approaches for both settings on the Berkeley Pacman game platfo
 	\caption{Game Play}
 	\label{fig:gameplay}
 \end{figure}
-	
 
-When we load in a map, we first convert it into a graph where each position (x, y coordinate) is only connected to positions that are reachable from it in one step (agents cannot go through walls). Once we have our graph, we precompute the shortest distances between any two positions in the map, using Floyd Warshall's cubic-runtime algorithm. These distances are stored and accessed in constant time by all agents at every step of the game. For example, in strategy 6, we simply make each ghost pick whatever action minimizes its distance to Pacman. For all of the other strategies, ghosts take distance into consideration, but there is also the added notion of trapping Pacman. We came up with a heuristic that successfully encourages ghosts to reduce the area that Pacman can maneuver in. Note that we introduce a bit of randomness in all algorithms just to account for different scenarios and generate more realistic simulations.\\
+When we load in a map, we first convert it into a graph where each position (x, y coordinate) is only connected to positions that are reachable from it in one step (agents cannot go through walls). Once we have our graph, we precompute the shortest distances between any two positions in the map, using Floyd Warshall's cubic-runtime algorithm. These distances are stored and accessed in constant time by all agents at every step of the game. For example, in strategy 6, we simply make each ghost pick whatever action minimizes its distance to Pacman. For all of the other strategies, ghosts take distance into consideration, but there is also the added notion of trapping Pacman. We came up with a heuristic that successfully encourages ghosts to reduce the area that Pacman can maneuver in. Note that we introduce a bit of randomness in all algorithms just to account for different scenarios and generate more realistic simulations.
+
 \subsection{Pacman Behavior}
-It's important here to mention how Pacman behaves. We modeled Pacman as a Minimax Alpha-Beta pruning agent. At depth $d$, Pacman evaluates a particular state $s$ by the distance to the ghost closest to it. So Pacman tries to maximize this distance, while it assumes that ghosts actively try to minimize it. This is an accurate vision of the world but it is however lacking the knowledge that ghosts will try to trap it. This is because of two reasons. First, ghosts may not always be trying to trap Pacman (strategy 6 for example). Second, it's not realistic to assume that Pacman has a complete mental model of the other ghosts and is able to simulate the computations of all other ghosts before taking its action.\\
+It's important here to mention how Pacman behaves. We modeled Pacman as a Minimax Alpha-Beta pruning agent. At depth $d$, Pacman evaluates a particular state $s$ by the distance to the ghost closest to it. So Pacman tries to maximize this distance, while it assumes that ghosts actively try to minimize it. This is an accurate vision of the world but it is however lacking the knowledge that ghosts will try to trap it. This is because of two reasons. First, ghosts may not always be trying to trap Pacman (strategy 6 for example). Second, it's not realistic to assume that Pacman has a complete mental model of the other ghosts and is able to simulate the computations of all other ghosts before taking its action.
+
 One more thing we should mention about Pacman is that in the case of strategy 4 in which Pacman overhears ghosts' communication, Pacman basically gains a depth of minimax for free because it knows exactly where the ghosts will be in one step. More importantly, Pacman's decision in this case is based on a more accurate model of the world, since Pacman no longer has to maximize a heuristic that does not take trapping into account, it can know exactly what the ghosts will do in the first step.
 
 \subsection{First Setting}
 \subsubsection{Trapping Heuristic}
 
-\begin{figure}
+\begin{figure}[H]
 	\includegraphics[width=\columnwidth]{badheuristic.png}
 	\caption{Bad Heuristic}
 	\label{fig:badheuristic}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[H]
 	\includegraphics[width=\columnwidth]{goodheuristic.png}
 	\caption{Good Heuristic}
 	\label{fig:goodheuristic}
@@ -161,8 +160,28 @@ We ran each algorithm for 100 games with 2, 3 and 4 ghost agents for each of two
 
 \subsection{Second Setting}
 
+\subsubsection{Layouts}
+For stigmergy, we modified the classic layout to be a big larger and to remove any 2x2 open spaces (so that everything consist of corridors or intersections).  
+
+\begin{figure}
+	\includegraphics[width=\columnwidth]{maptogether.png}\\
+	\caption{Map Together}
+	\label{fig:maptogether}
+\end{figure}
+
+\begin{figure}
+	\includegraphics[width=\columnwidth]{mapcorners.png}\\
+	\caption{Map Corners}
+	\label{fig:mapcorners}
+\end{figure}
+
+
+\subsubsection{Experiments}
+We ran each algorithm for 50 games with 4 ghost agents.  
+
 \section{Results and Discussion}
 
+\subsection{First Setting}
 Now we will discuss our results from running the simulations described in experimental setup. 
 
 %\includegraphics[width=\columnwidth]{time.png}
@@ -220,11 +239,39 @@ Now we will transition to examine our aggregated results over all of our results
 
 Some words about the tables. SAMMMIIIIII
 
+\subsection{Second Setting}
+For our stigmergy tests, we ran the three algorithms for 50 trials each, and recorded the scores.  
+\end{multicols}
+
+\begin{figure}[H]
+	\includegraphics[width=0.5 \columnwidth]{stigmergytrendclassicscore.png}
+	\includegraphics[width= 0.5 \columnwidth]{stigmergytrendclassicfail.png}
+	\caption{Number of Steps till Capture for Corners Initilization}
+\end{figure}
+
+\begin{figure}[H]
+	\centering{
+	\includegraphics[width=\textwidth]{stigmergyresultsclassic2.png}
+	\includegraphics[width=\textwidth]{stigmergyresultsclassic4.png}
+	\caption{Histograms showing the frequency distribution of ghost scores for each agent (higher scores are better) for Layout 1, with 2 and 4 ghost agents. Average Scores for 2 Ghosts (repulse, attract, blind): 214.4, 159.46, 60.82; 4 Ghosts: 439.34, 397.78, 175.62; Standard Deviations for 2 Ghosts: 158.45,170.85, 145.78; 4 Ghosts: 78.79, 88.88, 188.80}
+	\label{fig:stigmergyresultslayout1}
+	}
+\end{figure}
+\begin{figure}[H]
+	\centering{
+	\includegraphics[width=\textwidth]{stigmergyresultsalt2.png}
+	\includegraphics[width=\textwidth]{stigmergyresultsclassic4.png}
+	\caption{Histograms showing the frequency distribution of ghost scores for each agent (higher scores are better).  The top histogram is LaThe average scores for the repulse, attract, and blind agents were 439.32, 397.78, and 175.62 with standard deviations of 78.79, 88.87, and 188.80 respectively. Examining the left side of the histogram, the minimum value for repulse and attract agents were 108 and 178 respectively.  The blind agent hits the score boundary of 0 a total of 21 times.}
+	\label{fig:stigmergyresultslayout2}
+	}
+\end{figure}
+
+\begin{multicols}{2}
+
 \section{Conclusion and Future Directions}
 
 \section{Division of Work}
 
-\section{References}
 \bibliographystyle{plain}
 \bibliography{bibliography.bib}
 
