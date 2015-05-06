@@ -1,29 +1,28 @@
-\documentclass[11pt, twocolumn]{article}
-\usepackage[utf8]{inputenc}
+\documentclass[11pt]{article}
+\usepackage[letterpaper, margin=0.75in]{geometry}
 \usepackage{cite}
 \usepackage{url}
 \usepackage{multicol}
-\usepackage[letterpaper, margin=0.75in]{geometry}
 \usepackage{enumitem}
-\setlength{\columnsep}{0.5in}
 \usepackage{graphicx}
 \usepackage{tabto}
-\usepackage{array,url,kantlipsum}
 \usepackage{float}
 
 \begin{document}
-\twocolumn[{%
- \vspace*{25px}
+{
  \centering
  \LARGE Six Degrees of Collaboration \\ A Predator Pack's Guide to Success \\[1.5em]
  \large Sami Ghoche,
         George Lok,
         Devvret Rishi\\[1em]
+
         
-CS289 Final Project\\
-Harvard University
-  \vspace*{50px}
-}]
+	CS289 Final Project\\
+	
+	Harvard University
+
+  }
+\begin{multicols}{2}
 
 \begin{abstract}
 
@@ -77,8 +76,8 @@ In the second setting, we propose two different strategies revolving around the 
 
 \section{Experimental Setup}
 \subsection{General}
-We simulated our approaches for both settings on the Berkeley Pacman game platform because it lent itself well to the general pattern of predator/prey models and was flexible enough to allow all the behavior that we wanted to simulate. In the Pacman game, the prey is a Pacman agent, and the predators are one or many ghosts. In the original game, Pacman moves around a map collecting food, and he wins once all the food on the map has been collected. He loses when a ghost catches him. For our purposes, we eliminated the notion of food and winning, we kept the penalty associated with being caught, and we gave Pacman a reward for surviving each time step, thus incentivizing survival. Here is an example of what the game looks like: \\\\
-\includegraphics[scale=0.4]{examplemap.png}\\\\
+We simulated our approaches for both settings on the Berkeley Pacman game platform because it lent itself well to the general pattern of predator/prey models and was flexible enough to allow all the behavior that we wanted to simulate. In the Pacman game, the prey is a Pacman agent, and the predators are one or many ghosts. In the original game, Pacman moves around a map collecting food, and he wins once all the food on the map has been collected. He loses when a ghost catches him. For our purposes, we eliminated the notion of food and winning, we kept the penalty associated with being caught, and we gave Pacman a reward for surviving each time step, thus incentivizing survival. Here is an example of what the game looks like: \\
+\includegraphics[scale=0.4]{examplemap.png}\\
 When we load in a map, we first convert it into a graph where each position (x, y coordinate) is only connected to positions that are reachable from it in one step (agents cannot go through walls). Once we have our graph, we precompute the shortest distances between any two positions in the map, using Floyd Warshall's cubic-runtime algorithm. These distances are stored and accessed in constant time by all agents at every step of the game. For example, in strategy 6, we simply make each ghost pick whatever action minimizes its distance to Pacman. For all of the other strategies, ghosts take distance into consideration, but there is also the added notion of trapping Pacman. We came up with a heuristic that successfully encourages ghosts to reduce the area that Pacman can maneuver in. Note that we introduce a bit of randomness in all algorithms just to account for different scenarios and generate more realistic simulations.\\
 \subsection{Pacman Behavior}
 It's important here to mention how Pacman behaves. We modeled Pacman as a Minimax Alpha-Beta pruning agent. At depth $d$, Pacman evaluates a particular state $s$ by the distance to the ghost closest to it. So Pacman tries to maximize this distance, while it assumes that ghosts actively try to minimize it. This is an accurate vision of the world but it is however lacking the knowledge that ghosts will try to trap it. This is because of two reasons. First, ghosts may not always be trying to trap Pacman (strategy 6 for example). Second, it's not realistic to assume that Pacman has a complete mental model of the other ghosts and is able to simulate the computations of all other ghosts before taking its action.\\
@@ -117,12 +116,9 @@ $$h(s) = u - 1.5d$$ Where $u$ is the number of unsafe positions in state $s$ wit
 \end{figure}
 
 \subsubsection{Experiments}
-We ran each algorithm for 100 games with 2, 3 and 4 ghost agents for each of two initial configurations. In the first initial configuration, all ghosts started off very close to each other in the top left corner of the map. In the second initial configuration, ghosts started off each at a corner of the map. The initial configurations are shown below for 4 ghosts:\\\\
-
+We ran each algorithm for 100 games with 2, 3 and 4 ghost agents for each of two initial configurations. In the first initial configuration, all ghosts started off very close to each other in the top left corner of the map. In the second initial configuration, ghosts started off each at a corner of the map. The initial configurations are shown below for 4 ghosts
 
 \subsection{Second Setting}
-
-\pagebreak
 
 \section{Results and Discussion}
 
@@ -146,11 +142,15 @@ Some words about the previous figure.
 
 adsfasdfsadf
 
-\begin{figure*}[t]
+\end{multicols}
+
+
+\begin{figure}[H]
 	\includegraphics[width=\textwidth]{CornersScore.png}
 	\caption{Corner Steps}
-	
-\end{figure*}
+\end{figure}
+
+\begin{multicols}{2}
 
 Some words about the other previous figure. 
 
@@ -168,5 +168,5 @@ Some words about the other previous figure.
 \bibliographystyle{plain}
 \bibliography{bibliography.bib}
 
-
+\end{multicols}
 \end{document}
