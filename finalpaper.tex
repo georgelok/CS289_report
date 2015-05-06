@@ -189,9 +189,6 @@ For stigmergy, we modified the base medium classic layout from the Berkeley fram
 
 For this layout, we have two different starting locations for the ghosts and paceman.  One has the ghosts start in the center of the map with Pacman at the bottom (see figure \ref{fig:stigmap1}), and the other has ghosts start in the corners with paceman in the center (see figure \ref{fig:stigmap2}).  This is to help determine whether the starting position has an affect on our algorithms.
 
-
-
-
 \subsubsection{Algorithms}
 
 As our comparison algorithm, we implemented a BlindDirectionalGhost (see figure \ref{fig:blindghost}). A BlindDirectionalGhost acts randomly until it sights Pacman.  Upon sighting Pacman, it with high probability the shortest to Pacman's current position.  If BlindDirectionalGhost loses sight of Pacman, it keeps track of Pacman's last known position.  Upon arrive at the last known position, if BlindDirectionalGhost has not regained sight of Pacman, it clears it's knowledge of Pacman's position and acts randomly again.
@@ -202,7 +199,7 @@ As our comparison algorithm, we implemented a BlindDirectionalGhost (see figure 
 	\label{fig:blindghost}
 \end{figure}
 
-For our RepulseStigmergyGhost  (see figure \ref{fig:repulseghost}), on seeing Pacman, our ghosts lay down the maximum trail of 250.  If they have an idea where Pacman is, they lay down a trail of (250 - trailvalue[currentpos]) / 2 (i.e. they decrease the difference between the maximum trail value and the current trail value by half).   If they have no idea where Pacman is, they automatically lay down a trail of (250 - trailvalue[currentpos]) / 4 (i.e. they decrease the difference between the maximum trail value and the current trail value by a quarter). In normal circumstances, RepulseDirectionalGhosts try to take the action that leads to the path with the least trail, with a probability of (sumOfSurroundingTrails - trailvalue[newpos])/(2 * sumOfSurroundingTrails). (excluding the special initial case of no trailvalues).
+For our RepulseStigmergyGhost  (see figure \ref{fig:repulseghost}), on seeing Pacman, our ghosts lay down the maximum trail of 250.  If they have an idea where Pacman is, they lay down a trail of $$(250 - trailvalue[currentpos]) / 2$$ (i.e. they decrease the difference between the maximum trail value and the current trail value by half).   If they have no idea where Pacman is, they automatically lay down a trail of $$(250 - trailvalue[currentpos]) / 4$$ (i.e. they decrease the difference between the maximum trail value and the current trail value by a quarter). In normal circumstances, RepulseDirectionalGhosts try to take the action that leads to the path with the least trail, with a probability of $$\frac{sumOfSurroundingTrails - trailvalue[newpos]}{2 * sumOfSurroundingTrails}$$ (excluding the special initial case of no trailvalues).
 
 \begin{figure}[H]
 	\includegraphics[width=\columnwidth]{RepulseGhost.png}
@@ -210,15 +207,16 @@ For our RepulseStigmergyGhost  (see figure \ref{fig:repulseghost}), on seeing Pa
 	\protect\url{www.youtube.com/watch?v=3o6VXkEG1uw} 
 	\label{fig:repulseghost}
 \end{figure}
-
-For our AttractStigmergyGhost (see figure \ref{fig:attractghost}), on seeing Pacman, our ghosts lay down the maximum trail of 250.  If they have an idea where Pacman is, they lay down a trail of (250 - trailvalue[currentpos]) / 2 (i.e. they decrease the difference between the maximum trail value and the current trail value by half).   If they have no idea where Pacman is, they lay no trail at all. In normal circumstances, RepulseDirectionalGhosts try to take the action that leads to the path with the most trail, with a probability of (trailvalue[newpos])/(sumOfSurroundingTrails). (excluding the special initial case of no trailvalues).  
-
 \begin{figure}[H]
 	\includegraphics[width=\columnwidth]{AttractGhost.png}
 	\caption{AttractStigmergyGhost. Note the creation of trails when Pacman is in sight but not when he isn't.}
 	\protect\url{www.youtube.com/watch?v=qcaXzzpNs9s} 
 	\label{fig:attractghost}
 \end{figure}
+
+For our AttractStigmergyGhost (see figure \ref{fig:attractghost}), on seeing Pacman, our ghosts lay down the maximum trail of 250.  If they have an idea where Pacman is, they lay down a trail of (250 - trailvalue[currentpos]) / 2 (i.e. they decrease the difference between the maximum trail value and the current trail value by half).   If they have no idea where Pacman is, they lay no trail at all. In normal circumstances, RepulseDirectionalGhosts try to take the action that leads to the path with the most trail, with a probability of (trailvalue[newpos])/(sumOfSurroundingTrails). (excluding the special initial case of no trailvalues).  
+
+
 
 For both stigmergy ghosts, we put a large penalty for taking an action that puts us in a shared position with another ghost, and we put a large weight on actions that make us closer to Pacman if he's in sight or closed to his last known position if we have one.
 
@@ -239,14 +237,15 @@ We first examine the amount of time it takes for an agent to compute an action u
 	\caption{Average Computation Time Per Step}
 	\label{fig:averagecomputation}
 \end{figure}	
-
-We first examine the amount of time it takes for an agent to compute an action under each algorithm. As Figure \ref{fig:averagecomputation} shows, the computation time to run algorithm 1 far exceeds the computational time of the other approaches. This is in line with the theoretical asymptotic complexity of algorithm 1 which is $O(M^N)$ and exponentially slower than the other approaches. As expected, algorithms 3 and 4 take about the same time per step as well. In theory, algorithm 2 should take a longer time per step to run than algorithms 3 and 4 (its asymptotic runtime was exponentially larger), but for such small team sizes (a team of 1 and a team of 2), the exponent is dominated by the larger polynomial. Finally, as expected, algorithm 5 takes significantly less time than the other approaches, and algorithm 6 appears to take an almost negligible amount of time. 
-
 \begin{figure}[H]
 	\includegraphics[scale=0.45]{leftsteps.png}
 	\caption{Average Number of Steps from Top Left}
 	\label{fig:averagenumstepsleft}
 \end{figure}
+
+We first examine the amount of time it takes for an agent to compute an action under each algorithm. As Figure \ref{fig:averagecomputation} shows, the computation time to run algorithm 1 far exceeds the computational time of the other approaches. This is in line with the theoretical asymptotic complexity of algorithm 1 which is $O(M^N)$ and exponentially slower than the other approaches. As expected, algorithms 3 and 4 take about the same time per step as well. In theory, algorithm 2 should take a longer time per step to run than algorithms 3 and 4 (its asymptotic runtime was exponentially larger), but for such small team sizes (a team of 1 and a team of 2), the exponent is dominated by the larger polynomial. Finally, as expected, algorithm 5 takes significantly less time than the other approaches, and algorithm 6 appears to take an almost negligible amount of time. 
+
+
 
 \begin{figure}[H]
 	\includegraphics[scale=0.45]{cornersteps.png}
@@ -254,12 +253,14 @@ We first examine the amount of time it takes for an agent to compute an action u
 	\label{fig:averagenumstepscorner}
 \end{figure}
 
-\noindent We next want to explore the number of steps it takes for ghosts to capture Pacman according to the algorithm they follow under each of our initializations. In this case, the fewer steps it takes to capture Pacman, the better our performance is. Before we start discussing our results, our intuition tells us that algorithm 1 should perform best because every possible combination of actions is evaluated and if our heuristic is a good proxy for capturing Pacman, then there is no scenario where algorithm 1 is consistently beaten by another algorithm. Similarly, we would expect algorithm 2 to perform well but not as well as algorithm 1. It's not clear a priori whether algorithm 2 performs better than algorithm 3 or not. It's also not clear that algorithm 3 performs better than algorithm 4 although we would expect it to as long as Pacman's overhearing causes it to take smarter actions. We would also expect algorithm 3 to perform better than algorithm 5 because the heuristics would be evaluated based on more accurate states of the world that are guaranteed by other ghosts through communication. Finally, we would expect algorithm 6 to perform the worst between all algorithms because there is no explicit trapping behavior and it is theoretically possible that ghosts can chase Pacman Ad Infinitum (it it wasn't for a slight element of randomness that we incorporated in our action decision). \\
-Looking at the results in Figure 9 and 10, we notice that in both initial configurations, algorithm 1 takes the fewest amount of steps, and algorithm 6 takes the largest amount of steps (as we had expected). However, Figure \ref{fig:averagenumstepsleft} and Figure \ref{fig:averagenumstepscorner} reveal that surprisingly algorithm 2 takes a much higher amount of steps to capture Pacman than the other approaches except algorithm 6 (all of which seem to scale in inverse order of their complexity). We can explain this by noting that each subteam in algorithm 2 does not even take into account the positions of other ghosts outside of the subteam. This turns out to drastically affect the success rate because even in the case of algorithm 5 where agents do not explicitly collaborate, there is at least an implicit coordination between their actions even if that coordination is not entirely accurate.\\
+\noindent We next want to explore the number of steps it takes for ghosts to capture Pacman according to the algorithm they follow under each of our initializations. In this case, the fewer steps it takes to capture Pacman, the better our performance is. Before we start discussing our results, our intuition tells us that algorithm 1 should perform best because every possible combination of actions is evaluated and if our heuristic is a good proxy for capturing Pacman, then there is no scenario where algorithm 1 is consistently beaten by another algorithm. Similarly, we would expect algorithm 2 to perform well but not as well as algorithm 1. It's not clear a priori whether algorithm 2 performs better than algorithm 3 or not. It's also not clear that algorithm 3 performs better than algorithm 4 although we would expect it to as long as Pacman's overhearing causes it to take smarter actions. We would also expect algorithm 3 to perform better than algorithm 5 because the heuristics would be evaluated based on more accurate states of the world that are guaranteed by other ghosts through communication. Finally, we would expect algorithm 6 to perform the worst between all algorithms because there is no explicit trapping behavior and it is theoretically possible that ghosts can chase Pacman Ad Infinitum (it it wasn't for a slight element of randomness that we incorporated in our action decision). 
+
+Looking at the results in Figure \ref{fig:averagenumstepsleft} and  \ref{fig:averagenumstepscorner}, we notice that in both initial configurations, algorithm 1 takes the fewest amount of steps, and algorithm 6 takes the largest amount of steps (as we had expected). However, Figure \ref{fig:averagenumstepsleft} and Figure \ref{fig:averagenumstepscorner} reveal that surprisingly algorithm 2 takes a much higher amount of steps to capture Pacman than the other approaches except algorithm 6 (all of which seem to scale in inverse order of their complexity). We can explain this by noting that each subteam in algorithm 2 does not even take into account the positions of other ghosts outside of the subteam. This turns out to drastically affect the success rate because even in the case of algorithm 5 where agents do not explicitly collaborate, there is at least an implicit coordination between their actions even if that coordination is not entirely accurate.
+
 We also notice that algorithm 4 seems to consistently behave slightly worse than algorithm 3, so Pacman's overhearing does actually allow to take smarter decisions to counter the coordination of ghost agents. The difference in performance is not large enough to make algorithm 5 more successful than algorithm 4 so there is still some value in unencrypted communication so long as the $S$ cost mentioned earlier is high enough to warrant the dip in the success rate between algorithms 3 and 4.\\
 A very important observation we can make by comparing these two figures is that while the ordering of the algorithms is the same for both initial configurations, we notice that the spread between the algorithms is greatly reduced when the ghosts start at different corners. In fact, the difference between algorithms 1 and 6 when all ghosts start at top left is 18.5 steps on average, whereas it is only 8.6 on average when the ghosts start at different corners. The same pattern follows for all other algorithms, they all perform better in the corners initialization configuration, but the differences between the algorithms is greatly reduced for the corners initialization. For the corners configuration in particular, we can interpret this finding by observing the actual games and noticing that Pacman (who tries to minimize the distance to the closest ghost) has no preferred direction to take since ghosts are coming from all directions, so in a way, Pacman is already trapped even without any explicit trapping heuristics built into the ghost agents. From this observation, we conclude that depending on the initial configuration, the additional benefit from employing a more complex algorithm might not be worth the added time complexity anymore.\\\\
 
-We transition now to examining our aggregated results collected for each of 2, 3, and 4 ghosts, presented in the tables in Figures 11, 12 and 13. 
+We transition now to examining our aggregated results collected for each of 2, 3, and 4 ghosts, presented in the tables in Figures \ref{fig:numsecondsaction}, \ref{fig:numsecondinitialization} and \ref{fig:numberstepscornerscore}. 
 
 \end{multicols}
 
@@ -268,6 +269,7 @@ We transition now to examining our aggregated results collected for each of 2, 3
 	\includegraphics[width=0.85\textwidth]{timeValgs.png}
 	}
 	\caption{Number of Seconds to Generate Each Action}
+	\label{fig:numsecondsaction}
 \end{figure}
 
 \begin{figure}[H]
@@ -275,6 +277,7 @@ We transition now to examining our aggregated results collected for each of 2, 3
 	\includegraphics[width=0.85\textwidth]{TopLeftScore.png}
 	}
 	\caption{Number of Steps till Capture for Top Left Initilization}
+	\label{fig:numsecondinitialization}
 \end{figure}
 
 \begin{figure}[H]
@@ -282,21 +285,23 @@ We transition now to examining our aggregated results collected for each of 2, 3
 	\includegraphics[width=0.85\textwidth]{CornersScore.png}
 	}
 	\caption{Number of Steps till Capture for Corners Initilization}
+	\label{fig:numberstepscornerscore}
 \end{figure}
 
 
 \begin{multicols}{2}
 
-From Figure 11, we notice that the average time per step is constant for algorithm 6 regardless of the number of ghosts. For all other algorithms, the average time per step grows with the number of ghosts at rates corresponding with our predictions through the runtime complexity of each algorithm.\\
-From Figures 12 and 13, we notice that as noted before, the spread between algorithms decreases when the ghosts are initially at different corners (for all values of the number of ghosts). Interestingly, we also notice that all algorithms seem to perform better when the number of ghosts increases, and the spread between algorithms (from best to worst) seems to also decrease as the number of ghosts increases. This is particularly significant because it means that as the number of ghosts increases, a distributed algorithm like algorithm 5 becomes closer and closer in performance to algorithm 1. Couple that finding with the fact that centralized systems becomes much less scalable and tractable for larger values of $N$, and we conclude that it's always better to pick a distributed algorithm like algorithm 5 as the number of predators increases.
+From Figure \ref{fig:numsecondsaction}, we notice that the average time per step is constant for algorithm 6 regardless of the number of ghosts. For all other algorithms, the average time per step grows with the number of ghosts at rates corresponding with our predictions through the runtime complexity of each algorithm.\\
+From Figures \ref{fig:numsecondinitialization} and \ref{fig:numberstepscornerscore}, we notice that as noted before, the spread between algorithms decreases when the ghosts are initially at different corners (for all values of the number of ghosts). Interestingly, we also notice that all algorithms seem to perform better when the number of ghosts increases, and the spread between algorithms (from best to worst) seems to also decrease as the number of ghosts increases. This is particularly significant because it means that as the number of ghosts increases, a distributed algorithm like algorithm 5 becomes closer and closer in performance to algorithm 1. Couple that finding with the fact that centralized systems becomes much less scalable and tractable for larger values of $N$, and we conclude that it's always better to pick a distributed algorithm like algorithm 5 as the number of predators increases.
 
 Finally, we are interested in assessing the accuracy of our heuristic as a proxy for likelihood of capture success. We compare the progression of heuristic values in a game for each of the algorithms from 1 to 5. Note that we ignore algorithm 6 because there is no heuristic component to it.\\
 \begin{figure}[H]
 	\includegraphics[scale=0.45]{heuristicvalues.png}
 	\caption{Heuristic value progression per algorithm}
+	\label{fig:heuristicvalueprogression}
 \end{figure}
 
-\noindent In Figure 14, we notice that the lines end when a heuristic value of close to 12 is reached. This indicates that the game has ended because the capture was successful, so the heuristic value is consistent and accurate when the ghosts are about to capture Pacman. We also notice that the lines are monotonically increasing for the most part (this is not as clear for algorithm 3 but it is probably particular to that specific game perhaps because of the randomness that we introduced into the decision making). This means that the heuristic value is successfully guiding the agents towards success. These two observations lead us to conclude that our heuristic very accurately measures the predators' improvement toward capturing the prey. 
+\noindent In Figure \ref{fig:heuristicvalueprogression}, we notice that the lines end when a heuristic value of close to 12 is reached. This indicates that the game has ended because the capture was successful, so the heuristic value is consistent and accurate when the ghosts are about to capture Pacman. We also notice that the lines are monotonically increasing for the most part (this is not as clear for algorithm 3 but it is probably particular to that specific game perhaps because of the randomness that we introduced into the decision making). This means that the heuristic value is successfully guiding the agents towards success. These two observations lead us to conclude that our heuristic very accurately measures the predators' improvement toward capturing the prey. 
 
 \subsection{Second Setting}
 
