@@ -77,7 +77,14 @@ In the second setting, we propose two different strategies revolving around the 
 \section{Experimental Setup}
 \subsection{General}
 We simulated our approaches for both settings on the Berkeley Pacman game platform because it lent itself well to the general pattern of predator/prey models and was flexible enough to allow all the behavior that we wanted to simulate. In the Pacman game, the prey is a Pacman agent, and the predators are one or many ghosts. In the original game, Pacman moves around a map collecting food, and he wins once all the food on the map has been collected. He loses when a ghost catches him. For our purposes, we eliminated the notion of food and winning, we kept the penalty associated with being caught, and we gave Pacman a reward for surviving each time step, thus incentivizing survival. Here is an example of what the game looks like: \\
-\includegraphics[scale=0.4]{examplemap.png}\\
+
+\begin{figure}[H]
+	\includegraphics[width=\columnwidth]{examplemap.png}
+	\caption{Game Play}
+	\label{fig:gameplay}
+\end{figure}
+	
+
 When we load in a map, we first convert it into a graph where each position (x, y coordinate) is only connected to positions that are reachable from it in one step (agents cannot go through walls). Once we have our graph, we precompute the shortest distances between any two positions in the map, using Floyd Warshall's cubic-runtime algorithm. These distances are stored and accessed in constant time by all agents at every step of the game. For example, in strategy 6, we simply make each ghost pick whatever action minimizes its distance to Pacman. For all of the other strategies, ghosts take distance into consideration, but there is also the added notion of trapping Pacman. We came up with a heuristic that successfully encourages ghosts to reduce the area that Pacman can maneuver in. Note that we introduce a bit of randomness in all algorithms just to account for different scenarios and generate more realistic simulations.\\
 \subsection{Pacman Behavior}
 It's important here to mention how Pacman behaves. We modeled Pacman as a Minimax Alpha-Beta pruning agent. At depth $d$, Pacman evaluates a particular state $s$ by the distance to the ghost closest to it. So Pacman tries to maximize this distance, while it assumes that ghosts actively try to minimize it. This is an accurate vision of the world but it is however lacking the knowledge that ghosts will try to trap it. This is because of two reasons. First, ghosts may not always be trying to trap Pacman (strategy 6 for example). Second, it's not realistic to assume that Pacman has a complete mental model of the other ghosts and is able to simulate the computations of all other ghosts before taking its action.\\
@@ -132,31 +139,53 @@ Now we will discuss our results from running the simulations described in experi
 	\label{fig:averagecomputation}
 \end{figure}	
 
-Some words about the previous figure. 
+We first examine the amount of time it takes for an agent to compute an action under each algorithm. As Figure \ref{fig:averagecomputation} shows, the computation time to run algorithm 1 far exceeds the complexity of the other approaches. Algorithms 2 to four show relative similarities in complexity, which we certainly expect for algorithms 3 and 4; for algorithm 2 it is dependent on the team-size and in this setting with a team size of 2, we see a rough corespondence with algorithms 3 and 4. Algorithms 5 takes significantly less time than the other approaches, and algorithm 6 appears to take an almost negligible amount of time. 
 
 \begin{figure}[H]
 	\includegraphics[width=\columnwidth]{cornersteps.png}
-	\caption{Average Number of Steps}
-	\label{fig:averagenumsteps}
+	\caption{Average Number of Steps from Corner}
+	\label{fig:averagenumstepscorner}
 \end{figure}
 
-adsfasdfsadf
+\begin{figure}[H]
+	\includegraphics[width=\columnwidth]{leftsteps.png}
+	\caption{Average Number of Steps from Top Left}
+	\label{fig:averagenumstepsleft}
+\end{figure}
+
+We next want to explore the number of steps it takes for ghosts to capture Pacman according to the algorithm they follow under each of our initializations. In this case, the fewer steps it takes to capture Pacman, the better our performance is. As we would expect in both cases, algorithm 1 takes by far the fewest amount of steps, and algorithm 6 takes the largest amount of steps. However, Figure \ref{fig:averagenumstepscorner} and Figure \ref{fig:averagenumstepsleft} reveal that surprisingly algorithm 2 takes a much higher amount of steps to capture Pacman than the other approaches (all of which seem to scale in order with their complexity). We will discuss this deviation from our expectations shortly. SAMIIIII
+
+Now we will transition to examine our aggregated results over all of our results through the following tables. 
 
 \end{multicols}
+
+\begin{figure}[H]
+	\centering{
+	\includegraphics[width=0.85\textwidth]{timeValgs.png}
+	}
+	\caption{Number of Seconds to Generate Each Action}
+\end{figure}
 
 
 \begin{figure}[H]
 	\centering{
 	\includegraphics[width=0.85\textwidth]{CornersScore.png}
 	}
-	\caption{Corner Steps}
+	\caption{Number of Steps till Capture for Corners Initilization}
 \end{figure}
+
+
+\begin{figure}[H]
+	\centering{
+	\includegraphics[width=0.85\textwidth]{TopLeftScore.png}
+	}
+	\caption{Number of Steps till Capture for Top Left Initilization}
+\end{figure}
+
 
 \begin{multicols}{2}
 
-Some words about the other previous figure. 
-
-%\includegraphics[width=\columnwidth]{CornersScore.png}
+Some words about the tables. SAMMMIIIIII
 
 
 
