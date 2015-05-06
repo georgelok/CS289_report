@@ -98,10 +98,12 @@ In the first setting, we propose six different strategies. Here they are in decr
 In the second setting, we propose two different strategies revolving around the use of stigmergy.  In this setting, as ghosts do not know where Pacman is, they need a way to communicate with each other in order to find Pacman. The basic principle is that ghosts leave trails that other ghosts can sense when they are on top of them. The amount of trail left can depend on when ghosts see Pacman.  Ghosts will with high probability chase after Pacman if they see them.  Ghosts keep track of Pacman's last known position, and are biased to go towards that position if they don't see Pacman.  This last known position is reset if they arrive at the position and do not see Pacman.  Every time Pacman moves, the amount of trail decreases by a certain fraction.
 
 \begin{enumerate}[leftmargin=0.25cm]
-	\item Attractive Stigmergy\\
+	\item Attractive Stigmergy
+	
  	In attractive stigmergy, we adhere to the basic idea of stigmergy as presented by Beckers et. al \cite{beckers1992trails}. The idea is that ghosts will be able to follow trails in order to track down Pacman easier and then more easily capture Pacman as a group.  The basic mechanism is as follows: ghosts do not lay trails unless they either see Pacman or have an idea where Pacman is.  They lay more trail if they see Pacman than if they only have an idea where Pacman is.  Ghosts are more likely to choose a path that has more trail on it.  Finally, to prevent backtracking and to prevent them from sticking together, ghosts explicitly are less likely to take the reverse direction of the last action they do and are less likely to make an action that puts them on top of another ghost.
 	
 	\item Repulsive Stigmergy
+	
 	Taking advantage of the fact that we only need one ghost to capture Pacman, we reverse ghosts' reaction to trails and have them avoid paths that already have trail.  Ghosts always lay trail, but lay more trail if they think they know where Pacman is and significantly more trail if they directly see Pacman. Ghosts are more likely to choose a path that has less trail on it.  There's no need to prevent backtracking explicitly since the ghosts are unlikely to backtrack on their own trail.
 \end{enumerate}
 
@@ -164,55 +166,76 @@ We ran each algorithm for 100 games with 2, 3 and 4 ghost agents for each of two
 \subsection{Second Setting}
 
 \subsubsection{Framework Modifications}
-When we load in a map, we not only precompute the shortest distances between any two positions in the map, but we precompute a sight grid which determines for every pair of positions if two agents can see each other (i.e. they are directly vertical or horizontal from each other and there is no wall between them) create a trail grid, which allows ghosts at a position to see how much trail has been left. Every time Pacman makes his turn, our system simulates trail decay by dividing all trail values by 1.25.  
+When we load in a map, we not only precompute the shortest distances between any two positions in the map, but we precompute a sight grid which determines for every pair of positions if two agents can see each other (i.e. they are directly vertical or horizontal from each other and there is no wall between them) create a trail grid, which allows ghosts at a position to see how much trail has been left. Trail values max out at 250. Every time Pacman makes his turn, our system simulates trail decay by dividing all trail values by 1.25.  Finally, we modified the graphics of the framework to automatically display the value of the trail as a shade of red.
+
+One issue with the sight modification is that it currently only works at the beginning on an agent's current turn. In the framework, agents takes turns to make actions.  If an action moves a Ghost into sight of Pacman, and Pacman moves out of sight on its immediate next turn, the ghost does not register sight of Pacman, since the sight check only occurs at the beginning of the Ghost's turn, not at the end.  This is surprisingly not easy to fix because of the probability system that ghosts use to make their next action and this case perceivable happens with frequency.
 
 \subsubsection{Layouts}
-
-
-For stigmergy, we modified the base medium classic layout from the Berkeley framework to be a big larger and to remove any 2x2 open spaces (so that everything consist of corridors or intersections).   
-
-For this layout, we have two different stating locations for the ghosts and paceman.  One has the ghosts start in the center of the map with Pacman at the bottom, and the other has ghosts start in the
-
 \begin{figure}[H]
 	\includegraphics[width=\columnwidth]{StigmergyClassic1.png}
 	\caption{Stigmergy Layout 1: Ghosts in Center}
 	\label{fig:stigmap1}
 \end{figure}
-
-
 \begin{figure}[H]
-	\includegraphics[width=\columnwidth]{mapcorners.png}
-	\caption{Map Corners}
+	\includegraphics[width=\columnwidth]{StigmergyClassic2.png}
+	\caption{Stigmergy Layout 1}
 	\label{fig:stigmap2}
 \end{figure}
+For stigmergy, we modified the base medium classic layout from the Berkeley framework to be a big larger and to remove any 2x2 open spaces (so that everything consist of corridors or intersections).   
+
+For this layout, we have two different starting locations for the ghosts and paceman.  One has the ghosts start in the center of the map with Pacman at the bottom (see figure \ref{fig:stigmap1}), and the other has ghosts start in the corners with paceman in the center (see figure \ref{fig:stigmap2}).  This is to help determine whether the starting position has an affect on our algorithms.
 
 
-\subsubsection{Algorithm}
 
-\begin{enumerate}[leftmargin=0.25cm]
-\item
-test
 
-\end{enumerate}
+\subsubsection{Algorithms}
+
+As our comparison algorithm, we implemented a BlindDirectionalGhost (see figure \ref{fig:blindghost}). A BlindDirectionalGhost acts randomly until it sights Pacman.  Upon sighting Pacman, it with high probability the shortest to Pacman's current position.  If BlindDirectionalGhost loses sight of Pacman, it keeps track of Pacman's last known position.  Upon arrive at the last known position, if BlindDirectionalGhost has not regained sight of Pacman, it clears it's knowledge of Pacman's position and acts randomly again.
+\begin{figure}[H]
+	\includegraphics[width=\columnwidth]{BlindDirectionalGhost.png}
+	\caption{BlindDirectionalGhost. Note the lack of trails.
+	Video: \protect\url{www.youtube.com} }
+
+	\label{fig:blindghost}
+\end{figure}
+
+For our RepulseStigmergyGhost  (see figure \ref{fig:repulseghost}), on seeing Pacman, our ghosts lay down the maximum trail of 250.  If they have an idea where Pacman is, they lay down a trail of (250 - trailvalue[currentpos]) / 2 (i.e. they decrease the difference between the maximum trail value and the current trail value by half).   If they have no idea where Pacman is, they automatically lay down a trail of (250 - trailvalue[currentpos]) / 4 (i.e. they decrease the difference between the maximum trail value and the current trail value by a quarter). In normal circumstances, RepulseDirectionalGhosts try to take the action that leads to the path with the least trail, with a probability of (sumOfSurroundingTrails - trailvalue[newpos])/(2 * sumOfSurroundingTrails). (excluding the special initial case of no trailvalues).
+
+\begin{figure}[H]
+	\includegraphics[width=\columnwidth]{RepulseGhost.png}
+	\caption{RepulseStigmergyGhost. Note the creation of trails despite Pacman not being in sight at all.
+	Video: \protect\url{www.youtube.com} }
+	\label{fig:repulseghost}
+\end{figure}
+
+For our AttractStigmergyGhost (see figure \ref{fig:attractghost}), on seeing Pacman, our ghosts lay down the maximum trail of 250.  If they have an idea where Pacman is, they lay down a trail of (250 - trailvalue[currentpos]) / 2 (i.e. they decrease the difference between the maximum trail value and the current trail value by half).   If they have no idea where Pacman is, they lay no trail at all. In normal circumstances, RepulseDirectionalGhosts try to take the action that leads to the path with the most trail, with a probability of (trailvalue[newpos])/(sumOfSurroundingTrails). (excluding the special initial case of no trailvalues).  
+
+\begin{figure}[H]
+	\includegraphics[width=\columnwidth]{AttractGhost.png}
+	\caption{AttractStigmergyGhost. Note the creation of trails when Pacman is in sight but not when he isn't.
+	Video: \protect\url{www.youtube.com} }
+	\label{fig:attractghost}
+\end{figure}
+
+For both stigmergy ghosts, we put a large penalty for taking an action that puts us in a shared position with another ghost, and we put a large weight on actions that make us closer to Pacman if he's in sight or closed to his last known position if we have one.
 
 \subsubsection{Experiments}
 
-For 2,3,4 ghost on both layouts, we performed 50 trials each.  
+For 2,3,and 4 ghosts on both layouts, we performed 50 trials each for both algorithms.  
+
+For scoring our algorithms, the Berkeley framework has Pacman automatically gain a point every step it takes.  On ghost contact, Pacman loses 500 points.  Thus, we take the final score of every result and negate it in order to come up with a score for our algorithms.  We found early on that sometimes, the algorithms can run for an extremely long time because of the blind model, so we set a point of failure (when Pacman's score reaches 500).  Thus, each run gets a score from between 0 to 500, where 0 is when our algorithms fail (i.e. Pacman's score becomes 500, subtracted by the score loss from a ghost contact to keep scale), and 500 is Pacman being caught immediately (which is impossible).
 
 \section{Results and Discussion}
 
 \subsection{First Setting}
 Now we will discuss our results from running the simulations described in experimental setup. 
 
-%\includegraphics[width=\columnwidth]{time.png}
-
+We first examine the amount of time it takes for an agent to compute an action under each algorithm. As Figure \ref{fig:averagecomputation} shows, the computation time to run algorithm 1 far exceeds the complexity of the other approaches. Algorithms 2 to four show relative similarities in complexity, which we certainly expect for algorithms 3 and 4; for algorithm 2 it is dependent on the team-size and in this setting with a team size of 2, we see a rough corespondence with algorithms 3 and 4. Algorithms 5 takes significantly less time than the other approaches, and algorithm 6 appears to take an almost negligible amount of time. 
 \begin{figure}[H]
 	\includegraphics[width=\columnwidth]{time.png}
 	\caption{Average Computation Time Per Step}
 	\label{fig:averagecomputation}
 \end{figure}	
-
-We first examine the amount of time it takes for an agent to compute an action under each algorithm. As Figure \ref{fig:averagecomputation} shows, the computation time to run algorithm 1 far exceeds the complexity of the other approaches. Algorithms 2 to four show relative similarities in complexity, which we certainly expect for algorithms 3 and 4; for algorithm 2 it is dependent on the team-size and in this setting with a team size of 2, we see a rough corespondence with algorithms 3 and 4. Algorithms 5 takes significantly less time than the other approaches, and algorithm 6 appears to take an almost negligible amount of time. 
 
 \begin{figure}[H]
 	\includegraphics[width=\columnwidth]{cornersteps.png}
@@ -254,21 +277,37 @@ Now we will transition to examine our aggregated results over all of our results
 \end{figure}
 
 
-
 \begin{multicols}{2}
 
 Some words about the tables. SAMMMIIIIII
 
 \subsection{Second Setting}
-For our stigmergy tests, we ran the three algorithms for 50 trials each, and recorded the scores.  
-\end{multicols}
 
+For our stigmergy tests, we recorded the scores and calculated the averages and number of failures for each algorithm and for each ghost. 
+
+Examining figure \ref{fig:stigmergystats1} and figure \ref{fig:stigmergystats2} reveal that both stigmergy algorithms perform significantly better than the BlindDirectionalGhost.  Furthermore, the success of the Stigmergy algorithms seem to scale rapidly with the number of ghosts: 4 ghosts are sufficient to prevent failure to capture Pacman, and average scores for both layouts near or exceed 400 with 4 ghosts. 
+
+Layouts had a small effect on the stigmergy algorithms, in particular, both algorithms perform appreciably better on layout 2 with 3 ghosts.  However, BlindDirectionalGhost does extremely poorly with 2 ghosts on layout 2, failing every time.
+
+Examining figures \ref{fig:stigmergyresultslayout1} and \ref{fig:stigmergyresultslayout2} tell similar stories.  
+
+\end{multicols}
+\pagebreak
 \begin{figure}[H]
 	\includegraphics[width=0.5 \columnwidth]{stigmergytrendclassicscore.png}
 	\includegraphics[width= 0.5 \columnwidth]{stigmergytrendclassicfail.png}
-	\caption{Number of Steps till Capture for Corners Initilization}
+	\caption{Average Score and Number of Failures for Stigmergy Layout 1.  A larger average score and a low number of failures is better.}
+	\label{fig:stigmergystats1}
 \end{figure}
 
+\begin{figure}[H]
+	\includegraphics[width=0.5 \columnwidth]{stigmergytrendaltscore.png}
+	\includegraphics[width= 0.5 \columnwidth]{stigmergytrendaltfail.png}
+	\caption{Average Score and Number of Failures for Stigmergy Layout 2. A larger average score and a low number of failures is better.}
+	\label{fig:stigmergystats2}
+\end{figure}
+
+\pagebreak
 \begin{figure}[H]
 	\centering{
 	\includegraphics[width=\textwidth]{stigmergyresultsclassic2.png}
@@ -277,15 +316,16 @@ For our stigmergy tests, we ran the three algorithms for 50 trials each, and rec
 	\label{fig:stigmergyresultslayout1}
 	}
 \end{figure}
+
 \begin{figure}[H]
 	\centering{
 	\includegraphics[width=\textwidth]{stigmergyresultsalt2.png}
-	\includegraphics[width=\textwidth]{stigmergyresultsclassic4.png}
-	\caption{Histograms showing the frequency distribution of ghost scores for each agent (higher scores are better).  The top histogram is LaThe average scores for the repulse, attract, and blind agents were 439.32, 397.78, and 175.62 with standard deviations of 78.79, 88.87, and 188.80 respectively. Examining the left side of the histogram, the minimum value for repulse and attract agents were 108 and 178 respectively.  The blind agent hits the score boundary of 0 a total of 21 times.}
+	\includegraphics[width=\textwidth]{stigmergyresultsalt4.png}
+	\caption{Histograms showing the frequency distribution of ghost scores for each agent (higher scores are better) for Layout 2, with 2 and 4 ghost agents. Average Scores for 2 Ghosts (repulse, attract, blind): 217.64, 183.12, 0; 4 Ghosts: 437.04, 405.86, 174.92; Standard Deviations for 2 Ghosts: 162.9668503, 173.4814746, 0; 4 Ghosts: 73.54, 101.35,187.04}
 	\label{fig:stigmergyresultslayout2}
 	}
 \end{figure}
-
+\pagebreak
 \begin{multicols}{2}
 
 \section{Conclusion and Future Directions}
