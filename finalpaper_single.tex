@@ -31,7 +31,7 @@
         Devvret Rishi\\[1em]
 
         
-	CS289 Final Project\\
+	CS280r Final Project\\
 	
 	Harvard University
 	
@@ -47,13 +47,13 @@ We introduce different collaboration policies for a pack of predators chasing a 
 \section{Introduction}
 In nature, we observe that predator animals (including human beings) often collaborate when chasing a prey. This is because in some settings, a team of collaborating predators can achieve outcomes that separated individuals cannot, such as outcomes resulting from trapping behavior. However, collaboration nearly always exhibits large costs. First, collaborating agents have to split their rewards with their collaborators. In the animal world, this means gaining fewer resources; in law enforcement, this may mean receiving less credit for capturing criminals. Furthermore, collaboration always requires a form of coordination, and coordination is expensive. For example, we can consider ``perfect collaboration", whereby many predator agents act as a single unit that makes a single decision involving the movement of every agent in the team. This is essentially the same as having a centralized controller or a brain that directs each agent in the team. Such a centralized system though is not scalable, and there has been much research directed at developing scalable multi-agent systems in which computation is distributed among agents. 
 
-In this paper, we assume that predators consider each other as collaborators instead of competitors, and they strive jointly to maximize an aggregate reward, meaning that all agents benefit equally when the prey is captured, regardless of which predator captured it. We also disregard the free-rider problem and assume that all predators actively make an effort to help the team instead of relying on other collaborators and reaping the benefits of the capture. For our experiments, we used the Berkeley Pacman framework \cite{Pacman}. because it allows for very general predator/prey model simulations. We operate in two settings: In the first setting, all predators can observe each other and their prey at all times, whereas in the second setting, predators can only observe what is directly in their line of sight. In the first setting, we present six different collaboration strategies with varying degrees of collaborative cost and efficiency: 1- Fully centralized collaboration. 2- Fully centralized collaboration of loosely coupled subteams. 3- Encrypted communication of actions between predators. 4- Communication of actions between predators that can be overheard by a prey. 5- Individual actions while taking into account positions of other predators. 6- No collaboration at all. The first five of these strategies require the notion of trapping behavior, and one of the main contributions of this paper is a successful heuristic that leads to trapping behavior. In the second setting, agents leave stigmergic trails behind them that decay with time, this is reminiscent of many examples of stigmergic communication observed in nature (for example in foraging ants \cite{beckers1992trails}). We compare two alternative strategies that predators can use to interact with the stigmergic trails that others leave behind. 1- Avoid these trails in an attempt to split up effectively and capture the prey. 2- Follow these trails in an attempt to congregate and corner the prey when it is found.
+In this paper, we assume that predators consider each other as collaborators instead of competitors, and they strive jointly to maximize an aggregate reward, meaning that all agents benefit equally when the prey is captured, regardless of which predator captured it. We also disregard the free-rider problem and assume that all predators actively make an effort to help the team instead of relying on other collaborators and reaping the benefits of the capture. For our experiments, we used the Berkeley Pacman framework \cite{Pacman}. because it allows for very general predator/prey model simulations. We operate in two settings: In the first setting, all predators can observe each other and their prey at all times, whereas in the second setting, predators can only observe what is directly in their line of sight. In the first setting, we present six different collaboration strategies with varying degrees of collaborative cost and efficiency: 1- Fully centralized collaboration. 2- Fully centralized collaboration of independent subteams. 3- Encrypted communication of actions between predators. 4- Communication of actions between predators that can be overheard by a prey. 5- Individual actions while taking into account positions of other predators. 6- No collaboration at all. The first five of these strategies require the notion of trapping behavior, and one of the main contributions of this paper is a successful heuristic that leads to trapping behavior. In the second setting, agents leave stigmergic trails behind them that decay with time, this is reminiscent of many examples of stigmergic communication observed in nature (for example in foraging ants \cite{beckers1992trails}). We compare two alternative strategies that predators can use to interact with the stigmergic trails that others leave behind. 1- Avoid these trails in an attempt to split up effectively and capture the prey. 2- Follow these trails in an attempt to congregate and corner the prey when it is found.
 
 The paper is organized into the following sections: Section 2 describes related work. Section 3 provides detailed descriptions with theoretical considerations of our six strategies in the first setting, and two strategies in the second setting. Section 4 describes our implementation using the Berkeley Pacman framework and the experiments we conducted. Section 5 presents our results and discusses them. Section 6 presents our conclusions and section 7 discusses future research directions. 
 
 \section{Related Work}
 
-Although there hasnâ€™t been a significant amount of work explicitly exploring the tradeoffs between collaboration, communication and complexity in the settings that we chose to explore, our work was certainly motivated by a few different key papers we had read. 
+Although there hasn'€™t been a significant amount of work explicitly exploring the tradeoffs between collaboration, communication and complexity in the settings that we chose to explore, our work was certainly motivated by a few different key papers we had read. 
 
 In \textit{ Group Size, individual role differentiation and effectiveness of cooperation in a homogeneous group of hunters }, Escobedo et al. explore the emergence of cooperation in wolf-pack hunting using a very simple particle-based computational model \cite{escobedo2014group}. The setting that they were trying to model was similar to ours, as it involved multiple predatory agents collaborating together to try and capture a quarry and the authors were able to show that they could model the dynamics of how a wolf-pack goes about this task by modeling the interactions between wolves as each agent only trying to minimize their distance to the prey while maximizing its distance from the other wolves. Escobedo et al. showed that these simple interactions were able to explain much of the more complex collaborative behavior wolf-packs tended to demonstrate and this fact helped inform how we thought about trapping heuristics for our collaborative ghost agents, which we will cover later.
 
@@ -73,7 +73,7 @@ In the first setting, we propose six different strategies. Here they are in decr
 	
 	In this strategy, we treat the predators as a single unit (called a team). Thus, a team's action is called a joint action. Joint action $\vec{a} = <a_1, a_2, ..., a_n>$, where $N$ is the number of predators. A centralized controller will evaluate every possible joint action, and select the joint action with the highest value. If there are at most $M$ possible actions a predator can take at any time step $t$, and a total of $T$ time-steps, the computational complexity of this strategy in every time-step will be $O(M^N)$ and thus, for the entire duration of the pursuit, the complexity would be $O(TM^N)$.
 	
-	\item Fully centralized collaboration of loosely coupled subteams
+	\item Fully centralized collaboration of independent subteams
 	
 	In this strategy, we split the predators into $K$ subteams as evenly as possible. Each subteam $k$ will have a joint action $\vec{a_k}$. Joint action $\vec{a_k} = <a_1, a_2, ..., a_{\frac{N}{K}}>$. There is a centralized controller for each subteam that evaluates every possible joint action for that subteam and selects the one with the highest value. Since the computation for each subteam can be run in parallel, the complexity for this algorithm in one time-step will be $O(M^{\frac{N}{K}})$, and for the entire duration of the pursuit, the complexity would be $O(TM^{\frac{N}{K}})$. Therefore, this algorithm is asymptotically much faster than the first one, but its speed comes at a cost, since optimal joint actions for subteams might result in suboptimal joint actions for the larger team as a whole. 
 	
@@ -113,40 +113,46 @@ In the second setting, we propose two different strategies revolving around the 
 We simulated our approaches for both settings on the Berkeley Pacman game platform because it lent itself well to the general pattern of predator/prey models and was flexible enough to allow all the behavior that we wanted to simulate. In the Pacman game, the prey is a Pacman agent, and the predators are one or many ghosts. In the original game, Pacman moves around a map collecting food, and he wins once all the food on the map has been collected. He loses when a ghost catches him. For our purposes, we eliminated the notion of food and winning, we kept the penalty associated with being caught, and we gave Pacman a reward for surviving each time step, thus incentivizing survival. Here is an example of what the game looks like: \\
 
 \begin{figure}[H]
-	\includegraphics[width=\columnwidth]{examplemap.png}
+	\begin{center}
+	\includegraphics[scale=0.4]{examplemap.png}
 	\caption{Game Play}
+	\end{center}
 	\label{fig:gameplay}
 \end{figure}
 
 When we load in a map, we first convert it into a graph where each position (x, y coordinate) is only connected to positions that are reachable from it in one step (agents cannot go through walls). Once we have our graph, we precompute the shortest distances between any two positions in the map, using Floyd Warshall's cubic-runtime algorithm. These distances are stored and accessed in constant time by all agents at every step of the game. For example, in strategy 6, we simply make each ghost pick whatever action minimizes its distance to Pacman. For all of the other strategies, ghosts take distance into consideration, but there is also the added notion of trapping Pacman. We came up with a heuristic that successfully encourages ghosts to reduce the area that Pacman can maneuver in. Note that we introduce a bit of randomness in all algorithms just to account for different scenarios and generate more realistic simulations.
 
 \subsection{Pacman Behavior}
-It's important here to mention how Pacman behaves. We modeled Pacman as a Minimax Alpha-Beta pruning agent. At depth $d$, Pacman evaluates a particular state $s$ by the distance to the ghost closest to it. So Pacman tries to maximize this distance, while it assumes that ghosts actively try to minimize it. This is an accurate vision of the world but it is however lacking the knowledge that ghosts will try to trap it. This is because of two reasons. First, ghosts may not always be trying to trap Pacman (strategy 6 for example). Second, it's not realistic to assume that Pacman has a complete mental model of the other ghosts and is able to simulate the computations of all other ghosts before taking its action.
+It's important here to mention how Pacman behaves. We modeled Pacman as a Minimax Alpha-Beta pruning agent. At depth $d$, Pacman evaluates a particular state $s$ by the distance to the ghost closest to it. So Pacman tries to maximize this distance, while it assumes that ghosts actively try to minimize it. This is an accurate vision of the world but it is however lacking the knowledge that ghosts will try to trap Pacman. This is because of two reasons. First, ghosts may not always be trying to trap Pacman (strategy 6 for example). Second, it's not realistic to assume that Pacman has a complete mental model of the other ghosts and is able to simulate the computations of all other ghosts before taking its action.
 
-One more thing we should mention about Pacman is that in the case of strategy 4 in which Pacman overhears ghosts' communication, Pacman basically gains a depth of minimax for free because it knows exactly where the ghosts will be in one step. More importantly, Pacman's decision in this case is based on a more accurate model of the world, since Pacman no longer has to maximize a heuristic that does not take trapping into account, it can know exactly what the ghosts will do in the first step.
+One more thing we should mention about Pacman is that in the case of strategy 4 in which Pacman overhears ghosts' communication, Pacman basically gains one depth level of minimax for free because it knows exactly where the ghosts will be in one step. More importantly, Pacman's decision in this case is based on a more accurate model of the world, since Pacman no longer has to maximize a heuristic that does not take trapping into account, it can know exactly what the ghosts will do in the first step.
 
 \subsection{First Setting}
 \subsubsection{Trapping Heuristic}
 
 \begin{figure}[H]
+	\begin{center}
 	\includegraphics[width=0.5\textwidth]{badheuristic.png}
 	\caption{Bad Heuristic Value}
+	\end{center}
 	\label{fig:badheuristic}
 \end{figure}
 
 \begin{figure}[H]
+	\begin{center}
 	\includegraphics[width=0.5\textwidth]{goodheuristic.png}
 	\caption{Good Heuristic Value}
+	\end{center}
 	\label{fig:goodheuristic}
 \end{figure}
 
 
 
-This heuristic consists of two features. The first feature pertains to the distance between the ghost and Pacman. The second feature can be described as the total number of positions that are unsafe for pacman to be in, within a radius $r$. A position is unsafe if a ghost needs only one action to get there. To illustrate this, we can look at the following two images where the blue dots represent all the safe positions for Pacman within radius 4 and the red dots represent all the unsafe positions within radius 4. In figure \ref{fig:badheuristic}, the ghosts are close to each other so they only make seven dots unsafe. In figure \ref{fig:goodheuristic}, the ghosts are trapping pacman and they make 15 dots unsafe.\\ 
+This heuristic consists of two features. The first feature pertains to the distance between the ghost and Pacman. The second feature can be described as the total number of positions that are unsafe for pacman to be in, within a radius $r$. A position is unsafe if a ghost needs only one action to get there. To illustrate this, we can look at the following two images where the blue dots represent all the safe positions for Pacman within radius 4 and the red dots represent all the unsafe positions within radius 4. In figure 2, the ghosts are close to each other so they only make seven dots unsafe. In figure 3, the ghosts are trapping pacman and they make 15 dots unsafe.\\ 
 
 In the end, we settled on the following heuristic for each state $s$:
 $$h(s) = u - 1.5d$$ Where $u$ is the number of unsafe positions in state $s$ within radius $r$, and $d$ is the distance to Pacman. This heuristic incentivizes both getting closer to Pacman (in order to minimize the distance and get within the radius $r$), as well as getting further away from each other.\\
-To watch a short video demonstrating algorithms 6 and 1 in action with three ghosts, please visit the following url: \\
+To watch a short video demonstrating algorithms 6 and 1 in action with three ghosts, please visit the following url: 
 \url{www.youtube.com/watch?v=etU_Pud3HAM}
 
 
@@ -155,14 +161,18 @@ To watch a short video demonstrating algorithms 6 and 1 in action with three gho
 We ran each algorithm for 100 games with 2, 3 and 4 ghost agents for each of two initial configurations. In the first initial configuration, all ghosts started off very close to each other in the top left corner of the map. In the second initial configuration, ghosts started off each at a corner of the map. The initial configurations are shown below for 4 ghosts
 
 \begin{figure}[H]
-	\includegraphics[width=0.5\textwidth]{maptogether.png}
+	\begin{center}
+	\includegraphics[scale=0.35]{maptogether.png}
 	\caption{Ghosts in Top Left}
+	\end{center}
 	\label{fig:maptogether}
 \end{figure}
 
 \begin{figure}[H]
-	\includegraphics[width=0.5\textwidth]{mapcorners.png}
+	\begin{center}
+	\includegraphics[scale=0.35]{mapcorners.png}
 	\caption{Ghost in Corners}
+	\end{center}
 	\label{fig:mapcorners}
 \end{figure}
 
@@ -176,13 +186,17 @@ One issue with the sight modification is that it currently only works at the beg
 
 \subsubsection{Layouts}
 \begin{figure}[H]
-	\includegraphics[width=0.5\textwidth]{StigmergyClassic1.png}
+	\begin{center}
+	\includegraphics[scale=0.3]{StigmergyClassic1.png}
 	\caption{Stigmergy Layout 1: Ghosts in Center}
+	\end{center}
 	\label{fig:stigmap1}
 \end{figure}
 \begin{figure}[H]
-	\includegraphics[width=0.5\textwidth]{StigmergyClassic2.png}
+	\begin{center}
+	\includegraphics[scale=0.3]{StigmergyClassic2.png}
 	\caption{Stigmergy Layout 2: Ghosts in Corner}
+	\end{center}
 	\label{fig:stigmap2}
 \end{figure}
 For stigmergy, we modified the base medium classic layout from the Berkeley framework to be a big larger and to remove any 2x2 open spaces (so that everything consist of corridors or intersections).   
@@ -193,28 +207,36 @@ For this layout, we have two different starting locations for the ghosts and pac
 
 As our comparison algorithm, we implemented a BlindDirectionalGhost (see figure \ref{fig:blindghost}). A BlindDirectionalGhost acts randomly until it sights Pacman.  Upon sighting Pacman, it with high probability the shortest to Pacman's current position.  If BlindDirectionalGhost loses sight of Pacman, it keeps track of Pacman's last known position.  Upon arrive at the last known position, if BlindDirectionalGhost has not regained sight of Pacman, it clears it's knowledge of Pacman's position and acts randomly again.
 \begin{figure}[H]
+	\begin{center}
 	\includegraphics[width=0.5\textwidth]{BlindDirectionalGhost.png}
 	\caption{BlindDirectionalGhost. Note the lack of trails.}
  	\protect\url{www.youtube.com/watch?v=dVFe-fwSLTs} 
+	\end{center}
 	\label{fig:blindghost}
 \end{figure}
 
-For our RepulseStigmergyGhost  (see figure \ref{fig:repulseghost}), on seeing Pacman, our ghosts lay down the maximum trail of 250.  If they have an idea where Pacman is, they lay down a trail of $$(250 - trailvalue[currentpos]) / 2$$ (i.e. they decrease the difference between the maximum trail value and the current trail value by half).   If they have no idea where Pacman is, they automatically lay down a trail of $$(250 - trailvalue[currentpos]) / 4$$ (i.e. they decrease the difference between the maximum trail value and the current trail value by a quarter). In normal circumstances, RepulseDirectionalGhosts try to take the action that leads to the path with the least trail, with a probability of $$\frac{sumOfSurroundingTrails - trailvalue[newpos]}{2 * sumOfSurroundingTrails}$$ (excluding the special initial case of no trailvalues).
+For our RepulseStigmergyGhost  (see figure \ref{fig:repulseghost}), on seeing Pacman, our ghosts lay down the maximum trail of 250.  If they have an idea where Pacman is, they lay down a trail of $(250 - trailvalue[currentpos]) / 2$ (i.e. they decrease the difference between the maximum trail value and the current trail value by half).   If they have no idea where Pacman is, they automatically lay down a trail of $(250 - trailvalue[currentpos]) / 4$ (i.e. they decrease the difference between the maximum trail value and the current trail value by a quarter). In normal circumstances, RepulseDirectionalGhosts try to take the action that leads to the path with the least trail, with a probability of $\frac{sumOfSurroundingTrails - trailvalue[newpos]}{2 * sumOfSurroundingTrails}$ (excluding the special initial case of no trailvalues).
 
 \begin{figure}[H]
+\begin{center}
 	\includegraphics[width=0.5\textwidth]{RepulseGhost.png}
+	
 	\caption{RepulseStigmergyGhost. Note the creation of trails despite Pacman not being in sight at all.}
 	\protect\url{www.youtube.com/watch?v=3o6VXkEG1uw} 
 	\label{fig:repulseghost}
+	\end{center}
+	
 \end{figure}
 \begin{figure}[H]
+	\begin{center}
 	\includegraphics[width=0.5\textwidth]{AttractGhost.png}
 	\caption{AttractStigmergyGhost. Note the creation of trails when Pacman is in sight but not when he isn't.}
 	\protect\url{www.youtube.com/watch?v=qcaXzzpNs9s} 
+	\end{center}
 	\label{fig:attractghost}
 \end{figure}
 
-For our AttractStigmergyGhost (see figure \ref{fig:attractghost}), on seeing Pacman, our ghosts lay down the maximum trail of 250.  If they have an idea where Pacman is, they lay down a trail of $$(250 - trailvalue[currentpos]) / 2 $$ (i.e. they decrease the difference between the maximum trail value and the current trail value by half).   If they have no idea where Pacman is, they lay no trail at all. In normal circumstances, RepulseDirectionalGhosts try to take the action that leads to the path with the most trail, with a probability of $$\frac{trailvalue[newpos]}{sumOfSurroundingTrails}$$ (excluding the special initial case of no trailvalues).  
+For our AttractStigmergyGhost (see figure \ref{fig:attractghost}), on seeing Pacman, our ghosts lay down the maximum trail of 250.  If they have an idea where Pacman is, they lay down a trail of $(250 - trailvalue[currentpos]) / 2 $ (i.e. they decrease the difference between the maximum trail value and the current trail value by half).   If they have no idea where Pacman is, they lay no trail at all. In normal circumstances, RepulseDirectionalGhosts try to take the action that leads to the path with the most trail, with a probability of $\frac{trailvalue[newpos]}{sumOfSurroundingTrails}$ (excluding the special initial case of no trailvalues).  
 
 
 
@@ -230,26 +252,32 @@ For scoring our algorithms, the Berkeley framework has Pacman automatically gain
 
 \subsection{First Setting}
 Now we will discuss our results from running the simulations described in the experimental setup. 
-
-We first examine the amount of time it takes for an agent to compute an action under each algorithm. As Figure \ref{fig:averagecomputation} shows, the computation time to run algorithm 1 far exceeds the complexity of the other approaches. Algorithms 2 to four show relative similarities in complexity, which we certainly expect for algorithms 3 and 4; for algorithm 2 it is dependent on the team-size and in this setting with a team size of 2, we see a rough corespondence with algorithms 3 and 4. Algorithms 5 takes significantly less time than the other approaches, and algorithm 6 appears to take an almost negligible amount of time. 
 \begin{figure}[H]
-	\includegraphics[scale=0.45]{time.png}
+	\begin{center}
+	\includegraphics[scale=0.6]{time.png}
 	\caption{Average Computation Time Per Step}
+	\end{center}
 	\label{fig:averagecomputation}
-\end{figure}	
+\end{figure}
+We first examine the amount of time it takes for an agent to compute an action under each algorithm. As Figure \ref{fig:averagecomputation} shows, the computation time to run algorithm 1 far exceeds the computational time of the other approaches. This is in line with the theoretical asymptotic complexity of algorithm 1 which is $O(M^N)$ and exponentially slower than the other approaches. As expected, algorithms 3 and 4 take about the same time per step as well. In theory, algorithm 2 should take a longer time per step to run than algorithms 3 and 4 (its asymptotic runtime was exponentially larger), but for such small team sizes (a team of 1 and a team of 2), the exponent is dominated by the larger polynomial. Finally, as expected, algorithm 5 takes significantly less time than the other approaches, and algorithm 6 appears to take an almost negligible amount of time. 
+	
 \begin{figure}[H]
-	\includegraphics[scale=0.45]{leftsteps.png}
+	\begin{center}
+	\includegraphics[scale=0.6]{leftsteps.png}
 	\caption{Average Number of Steps from Top Left}
+	\end{center}
 	\label{fig:averagenumstepsleft}
 \end{figure}
 
-We first examine the amount of time it takes for an agent to compute an action under each algorithm. As Figure \ref{fig:averagecomputation} shows, the computation time to run algorithm 1 far exceeds the computational time of the other approaches. This is in line with the theoretical asymptotic complexity of algorithm 1 which is $O(M^N)$ and exponentially slower than the other approaches. As expected, algorithms 3 and 4 take about the same time per step as well. In theory, algorithm 2 should take a longer time per step to run than algorithms 3 and 4 (its asymptotic runtime was exponentially larger), but for such small team sizes (a team of 1 and a team of 2), the exponent is dominated by the larger polynomial. Finally, as expected, algorithm 5 takes significantly less time than the other approaches, and algorithm 6 appears to take an almost negligible amount of time. 
+
 
 
 
 \begin{figure}[H]
-	\includegraphics[scale=0.45]{cornersteps.png}
+	\begin{center}
+	\includegraphics[scale=0.6]{cornersteps.png}
 	\caption{Average Number of Steps from Corner}
+	\end{center}
 	\label{fig:averagenumstepscorner}
 \end{figure}
 
@@ -296,8 +324,10 @@ From Figures \ref{fig:numsecondinitialization} and \ref{fig:numberstepscornersco
 
 Finally, we are interested in assessing the accuracy of our heuristic as a proxy for likelihood of capture success. We compare the progression of heuristic values in a game for each of the algorithms from 1 to 5. Note that we ignore algorithm 6 because there is no heuristic component to it.\\
 \begin{figure}[H]
-	\includegraphics[scale=0.45]{heuristicvalues.png}
+\begin{center}
+	\includegraphics[scale=0.6]{heuristicvalues.png}
 	\caption{Heuristic value progression per algorithm}
+	\end{center}
 	\label{fig:heuristicvalueprogression}
 \end{figure}
 
@@ -314,16 +344,20 @@ Layouts had a small effect on the stigmergy algorithms, in particular, both algo
 Examining figures \ref{fig:stigmergyresultslayout1} and \ref{fig:stigmergyresultslayout2} tell similar stories.  BlindDirectionalGhost does poorly with any number of ghosts.  Both Repulse and Attract Stigmergy agents score improve with the number of ghosts both in average score but also in number of failures and in consistency (smaller standard deviations).
 
 \begin{figure}[H]
+\begin{center}
 	\includegraphics[width=0.5 \columnwidth]{stigmergytrendclassicscore.png}
 	\includegraphics[width= 0.5 \columnwidth]{stigmergytrendclassicfail.png}
 	\caption{Average Score and Number of Failures for Stigmergy Layout 1.  A larger average score and a low number of failures is better.}
+	\end{center}
 	\label{fig:stigmergystats1}
 \end{figure}
 
 \begin{figure}[H]
+	\begin{center}
 	\includegraphics[width=0.5 \columnwidth]{stigmergytrendaltscore.png}
 	\includegraphics[width= 0.5 \columnwidth]{stigmergytrendaltfail.png}
 	\caption{Average Score and Number of Failures for Stigmergy Layout 2. A larger average score and a low number of failures is better.}
+	\end{center}
 	\label{fig:stigmergystats2}
 \end{figure}
 
@@ -369,7 +403,5 @@ George worked exclusively on setting 2, and all algorithms developed and results
 \bibliographystyle{plain}
 \bibliography{bibliography.bib}
 
-\vspace*{9 in}
-\vspace*{1 in}
 
 \end{document}
